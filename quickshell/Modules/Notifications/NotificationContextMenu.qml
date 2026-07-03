@@ -95,8 +95,8 @@ PanelWindow {
         height: menuColumn.implicitHeight + Theme.spacingS * 2
         radius: Theme.cornerRadius
         color: Theme.withAlpha(Theme.surfaceContainer, Theme.popupTransparency)
-        border.color: BlurService.enabled ? BlurService.borderColor : Theme.outlineMedium
-        border.width: BlurService.enabled ? BlurService.borderWidth : 1
+        border.color: BlurService.borderColor
+        border.width: BlurService.borderWidth
 
         Column {
             id: menuColumn

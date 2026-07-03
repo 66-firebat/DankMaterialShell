@@ -18,11 +18,27 @@ Item {
     property var cachedIconThemes: SettingsData.availableIconThemes
     property var cachedCursorThemes: SettingsData.availableCursorThemes
     property var cachedMatugenSchemes: Theme.availableMatugenSchemes.map(option => option.label)
+    property var matugenSchemePreviews: ({})
+    property string matugenPreviewSource: ""
+    property real matugenPreviewContrast: 0
+    property string matugenPreviewRequestKey: ""
     property var installedRegistryThemes: []
     property var templateDetection: []
+    readonly property var matugenSchemeColorMap: {
+        const map = {};
+        const mode = SessionData.isLightMode ? "light" : "dark";
+        for (var i = 0; i < Theme.availableMatugenSchemes.length; i++) {
+            const option = Theme.availableMatugenSchemes[i];
+            const preview = matugenSchemePreviews[option.value];
+            if (preview?.[mode])
+                map[option.label] = preview[mode];
+        }
+        return map;
+    }
     readonly property var widgetBackgroundOptions: [({
                 "value": "sth",
-                "label": I18n.tr("Subtle Overlay", "widget background color option")
+                "label": I18n.tr("Overlay", "widget background color option"),
+                "previewColor": Theme.blend(Theme.surfaceContainerHigh, Theme.surfaceText, 0.24)
             }), ({
                 "value": "s",
                 "label": I18n.tr("Surface", "widget background color option")
@@ -173,9 +189,9 @@ Item {
         return Theme.warning;
     }
 
-    function openBlurBorderColorPicker() {
+    function openSurfaceBorderColorPicker() {
         PopoutService.colorPickerModal.selectedColor = SettingsData.blurBorderCustomColor ?? "#ffffff";
-        PopoutService.colorPickerModal.pickerTitle = I18n.tr("Blur Border Color");
+        PopoutService.colorPickerModal.pickerTitle = I18n.tr("Surface Border Color");
         PopoutService.colorPickerModal.onColorSelectedCallback = function (color) {
             SettingsData.set("blurBorderCustomColor", color.toString());
         };
@@ -210,6 +226,35 @@ Item {
         }
     }
 
+    function refreshMatugenSchemePreviews() {
+        if (!Theme.matugenAvailable)
+            return;
+        const sourceColor = Theme.getMatugenColor("source_color", Theme.primary).toString();
+        const contrast = SettingsData.matugenContrast ?? 0;
+        const requestKey = sourceColor + "|" + contrast;
+        if (sourceColor === matugenPreviewSource && contrast === matugenPreviewContrast && Object.keys(matugenSchemePreviews).length > 0)
+            return;
+        if (requestKey === matugenPreviewRequestKey)
+            return;
+        matugenPreviewRequestKey = requestKey;
+
+        Proc.runCommand("", ["dms", "matugen", "preview", "--source-color", sourceColor, "--contrast", contrast.toString()], (output, exitCode) => {
+            if (requestKey !== themeColorsTab.matugenPreviewRequestKey)
+                return;
+            if (exitCode !== 0) {
+                themeColorsTab.matugenPreviewRequestKey = "";
+                return;
+            }
+            try {
+                themeColorsTab.matugenSchemePreviews = JSON.parse(output.trim());
+                themeColorsTab.matugenPreviewSource = sourceColor;
+                themeColorsTab.matugenPreviewContrast = contrast;
+            } catch (e) {
+                themeColorsTab.matugenPreviewRequestKey = "";
+            }
+        });
+    }
+
     Component.onCompleted: {
         SettingsData.detectAvailableIconThemes();
         SettingsData.detectAvailableCursorThemes();
@@ -226,6 +271,7 @@ Item {
         });
         if (CompositorService.isNiri || CompositorService.isHyprland || CompositorService.isMango)
             checkCursorIncludeStatus();
+        refreshMatugenSchemePreviews();
     }
 
     Connections {
@@ -240,6 +286,23 @@ Item {
         function onPendingThemeInstallChanged() {
             if (PopoutService.pendingThemeInstall)
                 showThemeBrowser();
+        }
+    }
+
+    Connections {
+        target: Theme
+        function onMatugenColorsChanged() {
+            themeColorsTab.refreshMatugenSchemePreviews();
+        }
+        function onMatugenAvailableChanged() {
+            themeColorsTab.refreshMatugenSchemePreviews();
+        }
+    }
+
+    Connections {
+        target: SettingsData
+        function onMatugenContrastChanged() {
+            themeColorsTab.refreshMatugenSchemePreviews();
         }
     }
 
@@ -558,6 +621,7 @@ Item {
                             text: I18n.tr("Matugen Palette")
                             description: I18n.tr("Select the palette algorithm used for wallpaper-based colors")
                             options: cachedMatugenSchemes
+                            optionColorMap: matugenSchemeColorMap
                             currentValue: Theme.getMatugenScheme(SettingsData.matugenScheme).label
                             enabled: Theme.matugenAvailable
                             opacity: enabled ? 1 : 0.4
@@ -1706,6 +1770,64 @@ Item {
                     onSliderValueChanged: newValue => SettingsData.set("popupTransparency", newValue / 100)
                 }
 
+                SettingsDropdownRow {
+                    tab: "theme"
+                    tags: ["surface", "popup", "modal", "border", "outline", "edge"]
+                    settingKey: "blurBorderColor"
+                    text: I18n.tr("Surface Border Color")
+                    description: I18n.tr("Border color around popouts, modals, and other shell surfaces")
+                    options: [I18n.tr("Outline", "surface border color"), I18n.tr("Primary", "surface border color"), I18n.tr("Secondary", "surface border color"), I18n.tr("Text Color", "surface border color"), I18n.tr("Custom", "surface border color")]
+                    optionColorMap: ({
+                            [I18n.tr("Outline", "surface border color")]: Theme.outline,
+                            [I18n.tr("Primary", "surface border color")]: Theme.primary,
+                            [I18n.tr("Secondary", "surface border color")]: Theme.secondary,
+                            [I18n.tr("Text Color", "surface border color")]: Theme.surfaceText,
+                            [I18n.tr("Custom", "surface border color")]: SettingsData.blurBorderCustomColor ?? "#ffffff"
+                        })
+                    currentValue: {
+                        switch (SettingsData.blurBorderColor) {
+                        case "primary":
+                            return I18n.tr("Primary", "surface border color");
+                        case "secondary":
+                            return I18n.tr("Secondary", "surface border color");
+                        case "surfaceText":
+                            return I18n.tr("Text Color", "surface border color");
+                        case "custom":
+                            return I18n.tr("Custom", "surface border color");
+                        default:
+                            return I18n.tr("Outline", "surface border color");
+                        }
+                    }
+                    onValueChanged: value => {
+                        if (value === I18n.tr("Primary", "surface border color")) {
+                            SettingsData.set("blurBorderColor", "primary");
+                        } else if (value === I18n.tr("Secondary", "surface border color")) {
+                            SettingsData.set("blurBorderColor", "secondary");
+                        } else if (value === I18n.tr("Text Color", "surface border color")) {
+                            SettingsData.set("blurBorderColor", "surfaceText");
+                        } else if (value === I18n.tr("Custom", "surface border color")) {
+                            SettingsData.set("blurBorderColor", "custom");
+                            openSurfaceBorderColorPicker();
+                        } else {
+                            SettingsData.set("blurBorderColor", "outline");
+                        }
+                    }
+                }
+
+                SettingsSliderRow {
+                    tab: "theme"
+                    tags: ["surface", "popup", "modal", "border", "opacity"]
+                    settingKey: "blurBorderOpacity"
+                    text: I18n.tr("Surface Border Opacity")
+                    description: I18n.tr("Controls the outline of popouts, modals, and other shell surfaces")
+                    value: Math.round((SettingsData.blurBorderOpacity ?? 0.35) * 100)
+                    minimum: 0
+                    maximum: 100
+                    unit: "%"
+                    defaultValue: 35
+                    onSliderValueChanged: newValue => SettingsData.set("blurBorderOpacity", newValue / 100)
+                }
+
                 SettingsSliderRow {
                     tab: "theme"
                     tags: ["foreground", "layers", "outline", "border", "cards", "widgets", "notifications", "control center"]
@@ -1758,59 +1880,6 @@ Item {
                     checked: SettingsData.blurEnabled ?? false
                     enabled: BlurService.available
                     onToggled: checked => SettingsData.set("blurEnabled", checked)
-                }
-
-                SettingsDropdownRow {
-                    tab: "theme"
-                    tags: ["blur", "border", "outline", "edge"]
-                    settingKey: "blurBorderColor"
-                    text: I18n.tr("Blur Border Color")
-                    description: I18n.tr("Border color around blurred surfaces")
-                    visible: SettingsData.blurEnabled
-                    options: [I18n.tr("Outline", "blur border color"), I18n.tr("Primary", "blur border color"), I18n.tr("Secondary", "blur border color"), I18n.tr("Text Color", "blur border color"), I18n.tr("Custom", "blur border color")]
-                    currentValue: {
-                        switch (SettingsData.blurBorderColor) {
-                        case "primary":
-                            return I18n.tr("Primary", "blur border color");
-                        case "secondary":
-                            return I18n.tr("Secondary", "blur border color");
-                        case "surfaceText":
-                            return I18n.tr("Text Color", "blur border color");
-                        case "custom":
-                            return I18n.tr("Custom", "blur border color");
-                        default:
-                            return I18n.tr("Outline", "blur border color");
-                        }
-                    }
-                    onValueChanged: value => {
-                        if (value === I18n.tr("Primary", "blur border color")) {
-                            SettingsData.set("blurBorderColor", "primary");
-                        } else if (value === I18n.tr("Secondary", "blur border color")) {
-                            SettingsData.set("blurBorderColor", "secondary");
-                        } else if (value === I18n.tr("Text Color", "blur border color")) {
-                            SettingsData.set("blurBorderColor", "surfaceText");
-                        } else if (value === I18n.tr("Custom", "blur border color")) {
-                            SettingsData.set("blurBorderColor", "custom");
-                            openBlurBorderColorPicker();
-                        } else {
-                            SettingsData.set("blurBorderColor", "outline");
-                        }
-                    }
-                }
-
-                SettingsSliderRow {
-                    tab: "theme"
-                    tags: ["blur", "border", "opacity"]
-                    settingKey: "blurBorderOpacity"
-                    text: I18n.tr("Blur Border Opacity")
-                    description: I18n.tr("Controls the outer edge of protocol-blurred windows")
-                    visible: SettingsData.blurEnabled
-                    value: Math.round((SettingsData.blurBorderOpacity ?? 0.35) * 100)
-                    minimum: 0
-                    maximum: 100
-                    unit: "%"
-                    defaultValue: 35
-                    onSliderValueChanged: newValue => SettingsData.set("blurBorderOpacity", newValue / 100)
                 }
 
                 Item {
@@ -1902,6 +1971,13 @@ Item {
                     text: I18n.tr("Shadow Color")
                     description: I18n.tr("Base color for shadows (opacity is applied automatically)")
                     options: [I18n.tr("Default (Black)", "shadow color option"), I18n.tr("Text Color", "shadow color option"), I18n.tr("Primary", "shadow color option"), I18n.tr("Surface Variant", "shadow color option"), I18n.tr("Custom", "shadow color option")]
+                    optionColorMap: ({
+                            [I18n.tr("Default (Black)", "shadow color option")]: "#000000",
+                            [I18n.tr("Text Color", "shadow color option")]: Theme.surfaceText,
+                            [I18n.tr("Primary", "shadow color option")]: Theme.primary,
+                            [I18n.tr("Surface Variant", "shadow color option")]: Theme.surfaceVariant,
+                            [I18n.tr("Custom", "shadow color option")]: SettingsData.m3ElevationCustomColor ?? "#000000"
+                        })
                     currentValue: {
                         switch (SettingsData.m3ElevationColorMode) {
                         case "text":

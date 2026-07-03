@@ -109,8 +109,8 @@ Rectangle {
     implicitHeight: menuColumn.implicitHeight + Theme.spacingM * 2
     color: Theme.floatingSurface
     radius: Theme.cornerRadius
-    border.color: BlurService.enabled ? BlurService.borderColor : Theme.outlineStrong
-    border.width: BlurService.enabled ? BlurService.borderWidth : 1
+    border.color: BlurService.borderColor
+    border.width: BlurService.borderWidth
 
     Column {
         id: menuColumn

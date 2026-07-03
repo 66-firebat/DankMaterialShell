@@ -3058,7 +3058,8 @@
       "transparency"
     ],
     "icon": "blur_on",
-    "description": "Your compositor does not support background blur (ext-background-effect-v1)"
+    "description": "Your compositor does not support background blur (ext-background-effect-v1)",
+    "conditionKey": "isNiri"
   },
   {
     "section": "barElevationEnabled",
@@ -3086,56 +3087,6 @@
       "topbar"
     ],
     "description": "Shadow elevation on bars and panels"
-  },
-  {
-    "section": "blurBorderColor",
-    "label": "Blur Border Color",
-    "tabIndex": 10,
-    "category": "Theme & Colors",
-    "keywords": [
-      "appearance",
-      "around",
-      "blur",
-      "blurred",
-      "border",
-      "color",
-      "colors",
-      "colour",
-      "edge",
-      "hue",
-      "look",
-      "outline",
-      "scheme",
-      "style",
-      "surfaces",
-      "theme",
-      "tint"
-    ],
-    "description": "Border color around blurred surfaces"
-  },
-  {
-    "section": "blurBorderOpacity",
-    "label": "Blur Border Opacity",
-    "tabIndex": 10,
-    "category": "Theme & Colors",
-    "keywords": [
-      "appearance",
-      "blur",
-      "blurred",
-      "border",
-      "colors",
-      "controls",
-      "edge",
-      "look",
-      "opacity",
-      "outer",
-      "protocol",
-      "scheme",
-      "style",
-      "theme",
-      "windows"
-    ],
-    "description": "Controls the outer edge of protocol-blurred windows"
   },
   {
     "section": "buttonColorMode",
@@ -4056,6 +4007,62 @@
     ],
     "icon": "layers",
     "description": "Material inspired shadows and elevation on modals, popouts, and dialogs"
+  },
+  {
+    "section": "blurBorderColor",
+    "label": "Surface Border Color",
+    "tabIndex": 10,
+    "category": "Theme & Colors",
+    "keywords": [
+      "appearance",
+      "around",
+      "border",
+      "color",
+      "colors",
+      "colour",
+      "edge",
+      "hue",
+      "look",
+      "modal",
+      "modals",
+      "outline",
+      "popouts",
+      "popup",
+      "scheme",
+      "shell",
+      "style",
+      "surface",
+      "surfaces",
+      "theme",
+      "tint"
+    ],
+    "description": "Border color around popouts, modals, and other shell surfaces"
+  },
+  {
+    "section": "blurBorderOpacity",
+    "label": "Surface Border Opacity",
+    "tabIndex": 10,
+    "category": "Theme & Colors",
+    "keywords": [
+      "appearance",
+      "border",
+      "colors",
+      "controls",
+      "look",
+      "modal",
+      "modals",
+      "opacity",
+      "outline",
+      "popouts",
+      "popup",
+      "scheme",
+      "shell",
+      "style",
+      "surface",
+      "surfaces",
+      "theme"
+    ],
+    "description": "Controls the outline of popouts, modals, and other shell surfaces"
   },
   {
     "section": "popupTransparency",

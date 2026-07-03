@@ -118,6 +118,50 @@ type ColorsOutput struct {
 	} `json:"colors"`
 }
 
+type SchemePreview struct {
+	Dark  string `json:"dark"`
+	Light string `json:"light"`
+}
+
+var previewSchemeTypes = []string{
+	"scheme-tonal-spot",
+	"scheme-vibrant",
+	"scheme-content",
+	"scheme-expressive",
+	"scheme-fidelity",
+	"scheme-fruit-salad",
+	"scheme-monochrome",
+	"scheme-neutral",
+	"scheme-rainbow",
+}
+
+func PreviewSchemes(sourceColor string, contrast float64) (map[string]SchemePreview, error) {
+	if sourceColor == "" {
+		return nil, fmt.Errorf("source color is required")
+	}
+
+	previews := make(map[string]SchemePreview, len(previewSchemeTypes))
+	for _, schemeType := range previewSchemeTypes {
+		output, err := runMatugenDryRun(&Options{
+			Kind:        "hex",
+			Value:       sourceColor,
+			MatugenType: schemeType,
+			Contrast:    contrast,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("preview %s: %w", schemeType, err)
+		}
+
+		dark := extractMatugenColor(output, "primary", "dark")
+		light := extractMatugenColor(output, "primary", "light")
+		if dark == "" || light == "" {
+			return nil, fmt.Errorf("preview %s: primary colors missing from matugen output", schemeType)
+		}
+		previews[schemeType] = SchemePreview{Dark: dark, Light: light}
+	}
+	return previews, nil
+}
+
 func (o *Options) ColorsOutput() string {
 	return filepath.Join(o.StateDir, "dms-colors.json")
 }

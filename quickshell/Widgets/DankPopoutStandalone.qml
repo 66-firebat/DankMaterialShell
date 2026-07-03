@@ -909,7 +909,7 @@ Item {
                         visible: contentWrapper.visible
                         radius: Theme.cornerRadius
                         color: "transparent"
-                        border.color: BlurService.enabled ? BlurService.borderColor : Theme.outlineMedium
+                        border.color: BlurService.borderColor
                         border.width: BlurService.borderWidth
                         z: 100
                     }

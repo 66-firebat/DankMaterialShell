@@ -89,8 +89,8 @@ Popup {
     contentItem: Rectangle {
         color: Theme.floatingSurface
         radius: Theme.cornerRadius
-        border.color: BlurService.enabled ? BlurService.borderColor : Theme.outlineMedium
-        border.width: BlurService.enabled ? BlurService.borderWidth : 1
+        border.color: BlurService.borderColor
+        border.width: BlurService.borderWidth
 
         Column {
             id: menuColumn

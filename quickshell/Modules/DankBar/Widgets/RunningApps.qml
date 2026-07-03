@@ -860,8 +860,8 @@ BasePill {
                 height: 32
                 color: Theme.withAlpha(Theme.surfaceContainer, Theme.popupTransparency)
                 radius: Theme.cornerRadius
-                border.width: BlurService.enabled ? BlurService.borderWidth : 1
-                border.color: BlurService.enabled ? BlurService.borderColor : Theme.outlineStrong
+                border.width: BlurService.borderWidth
+                border.color: BlurService.borderColor
 
                 Rectangle {
                     anchors.fill: parent

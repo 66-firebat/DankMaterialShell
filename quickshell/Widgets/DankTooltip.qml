@@ -78,8 +78,8 @@ PanelWindow {
         anchors.fill: parent
         color: Theme.withAlpha(Theme.surfaceContainerHigh, Theme.popupTransparency)
         radius: Theme.cornerRadius
-        border.width: BlurService.enabled ? BlurService.borderWidth : 1
-        border.color: BlurService.enabled ? BlurService.borderColor : Theme.outlineMedium
+        border.width: BlurService.borderWidth
+        border.color: BlurService.borderColor
 
         StyledText {
             id: textContent

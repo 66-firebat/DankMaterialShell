@@ -111,7 +111,7 @@ Item {
         dim: false
 
         background: Rectangle {
-            color: Theme.withAlpha(Theme.surfaceContainerHigh, Theme.popupTransparency)
+            color: Theme.surfaceContainerHigh
             radius: Theme.cornerRadius
             border.width: 1
             border.color: Theme.outlineMedium

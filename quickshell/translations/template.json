@@ -2632,14 +2632,14 @@
     "comment": ""
   },
   {
-    "term": "Blur Border Color",
+    "term": "Surface Border Color",
     "translation": "",
     "context": "",
     "reference": "",
     "comment": ""
   },
   {
-    "term": "Blur Border Opacity",
+    "term": "Surface Border Opacity",
     "translation": "",
     "context": "",
     "reference": "",
@@ -2758,7 +2758,7 @@
     "comment": ""
   },
   {
-    "term": "Border color around blurred surfaces",
+    "term": "Border color around popouts, modals, and other shell surfaces",
     "translation": "",
     "context": "",
     "reference": "",
@@ -4340,7 +4340,7 @@
     "comment": ""
   },
   {
-    "term": "Controls the outer edge of protocol-blurred windows",
+    "term": "Controls the outer edge of popouts, modals, and other shell surfaces",
     "translation": "",
     "context": "",
     "reference": "",
@@ -17696,7 +17696,7 @@
     "comment": ""
   },
   {
-    "term": "Subtle Overlay",
+    "term": "Overlay",
     "translation": "",
     "context": "widget background color option",
     "reference": "",
