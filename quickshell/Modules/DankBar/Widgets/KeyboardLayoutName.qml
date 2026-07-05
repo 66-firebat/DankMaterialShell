@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.I3
 import qs.Common
 import qs.Modules.Plugins
 import qs.Services
@@ -110,6 +111,27 @@ BasePill {
                 Quickshell.execDetached(["hyprctl", "switchxkblayout", root.hyprlandKeyboard, "next"]);
             } else if (CompositorService.isMango) {
                 MangoService.cycleKeyboardLayout();
+            } else if (CompositorService.isSway) {
+                I3.dispatch("input type:keyboard xkb_switch_layout next");
+            }
+        }
+    }
+
+    Loader {
+        active: CompositorService.isSway
+        sourceComponent: I3IpcListener {
+            subscriptions: ["input"]
+            onIpcEvent: event => {
+                if (event.type !== "input")
+                    return;
+                try {
+                    const payload = JSON.parse(event.data);
+                    if (payload.change !== "xkb_layout")
+                        return;
+                    const name = payload.input?.xkb_active_layout_name;
+                    if (name)
+                        root.currentLayout = name;
+                } catch (e) {}
             }
         }
     }
@@ -126,12 +148,25 @@ BasePill {
     }
 
     Component.onCompleted: {
-        if (CompositorService.isHyprland) {
+        if (CompositorService.isHyprland || CompositorService.isSway) {
             updateLayout();
         }
     }
 
     function updateLayout() {
+        if (CompositorService.isSway) {
+            Proc.runCommand(null, ["swaymsg", "-t", "get_inputs", "-r"], (output, exitCode) => {
+                if (exitCode !== 0)
+                    return;
+                try {
+                    const inputs = JSON.parse(output);
+                    const kb = inputs.find(i => i.type === "keyboard" && i.xkb_active_layout_name);
+                    if (kb)
+                        root.currentLayout = kb.xkb_active_layout_name;
+                } catch (e) {}
+            });
+            return;
+        }
         if (CompositorService.isHyprland) {
             Proc.runCommand(null, ["hyprctl", "-j", "devices"], (output, exitCode) => {
                 if (exitCode !== 0) {
