@@ -1134,6 +1134,10 @@ BasePill {
                 width: overflowMenu.maskWidth
                 height: overflowMenu.maskHeight
             }
+
+            Region {
+                item: root.menuOpen ? menuContainer : null
+            }
         }
 
         onVisibleChanged: {
@@ -1245,36 +1249,38 @@ BasePill {
             height: alignedHeight
 
             x: Theme.snap((() => {
+                    const left = overflowMenu.maskX + 10;
+                    const right = overflowMenu.maskX + overflowMenu.maskWidth - alignedWidth - 10;
+
                     if (root.isVerticalOrientation) {
                         const edge = root.axis?.edge;
                         if (edge === "left") {
                             const targetX = overflowMenu.anchorPos.x;
-                            return Math.min(overflowMenu.screen.width - alignedWidth - 10, targetX);
+                            return Math.max(left, Math.min(right, targetX));
                         } else {
                             const targetX = overflowMenu.anchorPos.x - alignedWidth;
-                            return Math.max(10, targetX);
+                            return Math.max(left, Math.min(right, targetX));
                         }
                     } else {
-                        const left = 10;
-                        const right = overflowMenu.width - alignedWidth - 10;
                         const want = overflowMenu.anchorPos.x - alignedWidth / 2;
                         return Math.max(left, Math.min(right, want));
                     }
                 })(), overflowMenu.dpr)
 
             y: Theme.snap((() => {
+                    const top = overflowMenu.maskY + 10;
+                    const bottom = overflowMenu.maskY + overflowMenu.maskHeight - alignedHeight - 10;
+
                     if (root.isVerticalOrientation) {
-                        const top = Math.max(overflowMenu.barY, 10);
-                        const bottom = overflowMenu.height - alignedHeight - 10;
                         const want = overflowMenu.anchorPos.y - alignedHeight / 2;
                         return Math.max(top, Math.min(bottom, want));
                     } else {
                         if (root.isAtBottom) {
                             const targetY = overflowMenu.anchorPos.y - alignedHeight;
-                            return Math.max(10, targetY);
+                            return Math.max(top, Math.min(bottom, targetY));
                         } else {
                             const targetY = overflowMenu.anchorPos.y;
-                            return Math.min(overflowMenu.screen.height - alignedHeight - 10, targetY);
+                            return Math.max(top, Math.min(bottom, targetY));
                         }
                     }
                 })(), overflowMenu.dpr)
@@ -1663,6 +1669,10 @@ BasePill {
                         width: menuWindow.maskWidth
                         height: menuWindow.maskHeight
                     }
+
+                    Region {
+                        item: menuRoot.showMenu ? trayMenuContainer : null
+                    }
                 }
 
                 onVisibleChanged: {
@@ -1758,36 +1768,38 @@ BasePill {
                     height: alignedHeight
 
                     x: Theme.snap((() => {
+                            const left = menuWindow.maskX + 10;
+                            const right = menuWindow.maskX + menuWindow.maskWidth - alignedWidth - 10;
+
                             if (menuRoot.isVertical) {
                                 const edge = menuRoot.axis?.edge;
                                 if (edge === "left") {
                                     const targetX = menuWindow.anchorPos.x;
-                                    return Math.min(menuWindow.screen.width - alignedWidth - 10, targetX);
+                                    return Math.max(left, Math.min(right, targetX));
                                 } else {
                                     const targetX = menuWindow.anchorPos.x - alignedWidth;
-                                    return Math.max(10, targetX);
+                                    return Math.max(left, Math.min(right, targetX));
                                 }
                             } else {
-                                const left = 10;
-                                const right = menuWindow.width - alignedWidth - 10;
                                 const want = menuWindow.anchorPos.x - alignedWidth / 2;
                                 return Math.max(left, Math.min(right, want));
                             }
                         })(), menuWindow.dpr)
 
                     y: Theme.snap((() => {
+                            const top = menuWindow.maskY + 10;
+                            const bottom = menuWindow.maskY + menuWindow.maskHeight - alignedHeight - 10;
+
                             if (menuRoot.isVertical) {
-                                const top = Math.max(menuWindow.barY, 10);
-                                const bottom = menuWindow.height - alignedHeight - 10;
                                 const want = menuWindow.anchorPos.y - alignedHeight / 2;
                                 return Math.max(top, Math.min(bottom, want));
                             } else {
                                 if (menuRoot.isAtBottom) {
                                     const targetY = menuWindow.anchorPos.y - alignedHeight;
-                                    return Math.max(10, targetY);
+                                    return Math.max(top, Math.min(bottom, targetY));
                                 } else {
                                     const targetY = menuWindow.anchorPos.y;
-                                    return Math.min(menuWindow.screen.height - alignedHeight - 10, targetY);
+                                    return Math.max(top, Math.min(bottom, targetY));
                                 }
                             }
                         })(), menuWindow.dpr)
