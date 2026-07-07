@@ -23,6 +23,9 @@ Singleton {
     readonly property color accentHover: Theme.withAlpha(accent, 0.12)
     readonly property color accentPressed: Theme.withAlpha(accent, Theme.transparentBlurLayers ? 0.24 : 0.16)
 
+    readonly property color accentTrack: Theme.withAlpha(accent, 0.28)
+    readonly property color accentSubtle: Theme.withAlpha(accent, 0.55)
+
     // Plain-named alias: underscore-prefixed props with onChanged handlers crash config load.
     readonly property string artUrl: TrackArtService.resolvedArtUrl
     onArtUrlChanged: {

@@ -144,7 +144,8 @@ Item {
                 showActualPlaybackState: root.isSeeking
                 fillColor: MediaAccentService.accent
                 playheadColor: MediaAccentService.accent
-                actualProgressColor: Theme.onSurface_38
+                trackColor: MediaAccentService.accentTrack
+                actualProgressColor: MediaAccentService.accentSubtle
                 isPlaying: activePlayer && activePlayer.playbackState === MprisPlaybackState.Playing
 
                 MouseArea {
