@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.Common
+import qs.Services
 
 Singleton {
     id: root
@@ -850,10 +851,23 @@ Singleton {
         }
     }
 
+    function notepadSlideoutForFocusedScreen() {
+        if (!notepadSlideouts || notepadSlideouts.length === 0)
+            return null;
+        const focused = BarWidgetService.getFocusedScreenName();
+        if (focused) {
+            for (var i = 0; i < notepadSlideouts.length; i++) {
+                if (notepadSlideouts[i]?.modelData?.name === focused)
+                    return notepadSlideouts[i];
+            }
+        }
+        return notepadSlideouts[0];
+    }
+
     function openNotepadSlideout() {
         notepadPopout?.hide();
         if (notepadSlideouts.length > 0) {
-            notepadSlideouts[0]?.show();
+            notepadSlideoutForFocusedScreen()?.show();
         }
     }
 
@@ -892,7 +906,7 @@ Singleton {
             return;
         }
         if (notepadSlideouts.length > 0) {
-            notepadSlideouts[0]?.hide();
+            notepadSlideoutForFocusedScreen()?.hide();
         }
     }
 
@@ -902,7 +916,7 @@ Singleton {
             return;
         }
         if (notepadSlideouts.length > 0) {
-            notepadSlideouts[0]?.toggle();
+            notepadSlideoutForFocusedScreen()?.toggle();
         }
     }
 
