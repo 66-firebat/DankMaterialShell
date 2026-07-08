@@ -134,7 +134,7 @@ Column {
                 width: (parent.width - Theme.spacingS) / 2
                 iconName: "window"
                 title: "Window Rules"
-                description: "Rules for all compositors"
+                description: "Rules for many compositors"
                 onClicked: PopoutService.openSettingsWithTab("window_rules")
             }
 
