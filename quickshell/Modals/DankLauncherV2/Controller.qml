@@ -930,23 +930,10 @@ Item {
                 searchCompleted();
                 return;
             } else if (!searchQuery) {
-                var emptyTriggerOrdered = getEmptyTriggerPluginsOrdered();
-                for (var i = 0; i < emptyTriggerOrdered.length; i++) {
-                    var plugin = emptyTriggerOrdered[i];
-                    if (plugin.isBuiltIn) {
-                        var blItems = AppSearchService.getBuiltInLauncherItems(plugin.id, searchQuery);
-                        for (var j = 0; j < blItems.length; j++)
-                            allItems.push(transformBuiltInSearchItem(blItems[j], plugin.id));
-                    } else {
-                        var pItems = getPluginItems(plugin.id, searchQuery);
-                        for (var j = 0; j < pItems.length; j++)
-                            allItems.push(pItems[j]);
-                    }
-                }
-
-                var browseItems = getPluginBrowseItems();
-                for (var i = 0; i < browseItems.length; i++)
-                    allItems.push(browseItems[i]);
+                _pluginPhasePending = true;
+                _phase1Items = allItems.slice();
+                _pluginPhaseForceFirst = shouldResetSelection;
+                pluginPhaseTimer.restart();
             }
         }
 
@@ -977,11 +964,6 @@ Item {
         flatModel = Scorer.flattenSections(newSections);
         sections = newSections;
 
-        if (!AppSearchService.isCacheValid() && !searchQuery && searchMode === "all" && !pluginFilter) {
-            AppSearchService.setCachedDefaultSections(sections, flatModel);
-            _saveDiskCache(sections);
-        }
-
         selectedFlatIndex = restoreSelection(flatModel);
         updateSelectedItem();
 
@@ -991,7 +973,9 @@ Item {
 
     function _performPluginPhase() {
         _pluginPhasePending = false;
-        if (!searchQuery || searchQuery.length < 2 || searchMode !== "all")
+        if (searchMode !== "all")
+            return;
+        if (searchQuery && searchQuery.length < 2)
             return;
 
         var currentVersion = _searchVersion;
@@ -999,27 +983,49 @@ Item {
         var allItems = _phase1Items;
         _phase1Items = [];
 
-        var allPluginsOrdered = getAllVisiblePluginsOrdered();
-        var maxPerPlugin = 10;
-        for (var i = 0; i < allPluginsOrdered.length; i++) {
-            if (currentVersion !== _searchVersion)
-                return;
-            var plugin = allPluginsOrdered[i];
-            if (plugin.isBuiltIn && (plugin.id === "dms_settings_search" || plugin.id === "dms_clipboard_search"))
-                continue;
-            if (plugin.isBuiltIn) {
-                var blItems = AppSearchService.getBuiltInLauncherItems(plugin.id, searchQuery);
-                var blLimit = Math.min(blItems.length, maxPerPlugin);
-                for (var j = 0; j < blLimit; j++) {
-                    var item = transformBuiltInSearchItem(blItems[j], plugin.id);
-                    item._preScored = 900 - j;
-                    allItems.push(item);
+        if (!searchQuery) {
+            var emptyTriggerOrdered = getEmptyTriggerPluginsOrdered();
+            for (var i = 0; i < emptyTriggerOrdered.length; i++) {
+                if (currentVersion !== _searchVersion)
+                    return;
+                var plugin = emptyTriggerOrdered[i];
+                if (plugin.isBuiltIn) {
+                    var blItems = AppSearchService.getBuiltInLauncherItems(plugin.id, searchQuery);
+                    for (var j = 0; j < blItems.length; j++)
+                        allItems.push(transformBuiltInSearchItem(blItems[j], plugin.id));
+                } else {
+                    var pItems = getPluginItems(plugin.id, searchQuery);
+                    for (var j = 0; j < pItems.length; j++)
+                        allItems.push(pItems[j]);
                 }
-            } else {
-                var pItems = getPluginItems(plugin.id, searchQuery, maxPerPlugin);
-                for (var j = 0; j < pItems.length; j++) {
-                    pItems[j]._preScored = 900 - j;
-                    allItems.push(pItems[j]);
+            }
+
+            var browseItems = getPluginBrowseItems();
+            for (var i = 0; i < browseItems.length; i++)
+                allItems.push(browseItems[i]);
+        } else {
+            var allPluginsOrdered = getAllVisiblePluginsOrdered();
+            var maxPerPlugin = 10;
+            for (var i = 0; i < allPluginsOrdered.length; i++) {
+                if (currentVersion !== _searchVersion)
+                    return;
+                var plugin = allPluginsOrdered[i];
+                if (plugin.isBuiltIn && (plugin.id === "dms_settings_search" || plugin.id === "dms_clipboard_search"))
+                    continue;
+                if (plugin.isBuiltIn) {
+                    var blItems = AppSearchService.getBuiltInLauncherItems(plugin.id, searchQuery);
+                    var blLimit = Math.min(blItems.length, maxPerPlugin);
+                    for (var j = 0; j < blLimit; j++) {
+                        var item = transformBuiltInSearchItem(blItems[j], plugin.id);
+                        item._preScored = 900 - j;
+                        allItems.push(item);
+                    }
+                } else {
+                    var pItems = getPluginItems(plugin.id, searchQuery, maxPerPlugin);
+                    for (var j = 0; j < pItems.length; j++) {
+                        pItems[j]._preScored = 900 - j;
+                        allItems.push(pItems[j]);
+                    }
                 }
             }
         }
@@ -1029,7 +1035,8 @@ Item {
 
         var dynamicDefs = buildDynamicSectionDefs(allItems);
         var scoredItems = Scorer.scoreItems(allItems, searchQuery, getFrecencyForItem);
-        var newSections = Scorer.groupBySection(scoredItems, dynamicDefs, false, 50);
+        var sortAlpha = !searchQuery && SettingsData.sortAppsAlphabetically;
+        var newSections = Scorer.groupBySection(scoredItems, dynamicDefs, sortAlpha, searchQuery ? 50 : 500);
 
         if (currentVersion !== _searchVersion)
             return;
@@ -1043,6 +1050,12 @@ Item {
         _applyHighlights(newSections, searchQuery);
         flatModel = Scorer.flattenSections(newSections);
         sections = newSections;
+
+        if (!AppSearchService.isCacheValid() && !searchQuery && !pluginFilter) {
+            AppSearchService.setCachedDefaultSections(sections, flatModel);
+            _saveDiskCache(sections);
+        }
+
         selectedFlatIndex = restoreSelection(flatModel);
         updateSelectedItem();
         isSearching = false;
