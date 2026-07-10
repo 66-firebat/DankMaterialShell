@@ -1,0 +1,30 @@
+{
+  "dankPomodoroTimer": {
+    "enabled": false
+  },
+  "dankKDEConnect": {
+    "enabled": false,
+    "selectedDeviceId": "42dbe417c23c4c549d7d2aabf908a904"
+  },
+  "alarmClock": {
+    "enabled": false
+  },
+  "amdGpuMonitor": {
+    "enabled": false,
+    "popoutStyle": "default",
+    "processListHeight": "400",
+    "minimumWidth": true
+  },
+  "wfRecorderIndicator": {
+    "enabled": true
+  },
+  "processList": {
+    "enabled": false
+  },
+  "appShortcut": {
+    "enabled": false
+  },
+  "dankDesktopWeather": {
+    "enabled": true
+  }
+}
