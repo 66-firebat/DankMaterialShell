@@ -327,7 +327,7 @@
   "fontFamily": "Inter Variable",
   "monoFontFamily": "FreeMono",
   "fontWeight": 600,
-  "fontScale": 1.19,
+  "fontScale": 1.11,
   "textRenderType": 0,
   "textRenderQuality": 0,
   "notepadUseMonospace": true,
@@ -567,6 +567,23 @@
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
+          "id": "clock",
+          "enabled": true
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
+          "id": "wfRecorderIndicator",
+          "enabled": true
+        },
+        {
+          "id": "clipboard",
+          "enabled": false
+        },
+        {
           "id": "workspaceSwitcher",
           "enabled": true
         }
@@ -574,15 +591,16 @@
       "centerWidgets": [],
       "rightWidgets": [
         {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
+          "id": "notificationButton",
+          "enabled": true
+        },
+        {
           "id": "music",
-          "enabled": true
-        },
-        {
-          "id": "dankKDEConnect",
-          "enabled": true
-        },
-        {
-          "id": "clipboard",
           "enabled": true
         },
         {
@@ -596,22 +614,10 @@
         {
           "id": "controlCenterButton",
           "enabled": true
-        },
-        {
-          "id": "clock",
-          "enabled": true
-        },
-        {
-          "id": "wfRecorderIndicator",
-          "enabled": true
-        },
-        {
-          "id": "notificationButton",
-          "enabled": true
         }
       ],
       "spacing": 6,
-      "innerPadding": -6,
+      "innerPadding": -3,
       "bottomGap": 10,
       "transparency": 1,
       "widgetTransparency": 1,
@@ -632,8 +638,8 @@
       "widgetOutlineColor": "primary",
       "widgetOutlineOpacity": 1,
       "widgetOutlineThickness": 1,
-      "fontScale": 1.28,
-      "iconScale": 1.57,
+      "fontScale": 1.16,
+      "iconScale": 1.11,
       "autoHide": false,
       "autoHideStrict": false,
       "autoHideDelay": 250,
@@ -650,7 +656,8 @@
       "shadowOpacity": 60,
       "shadowColorMode": "default",
       "shadowCustomColor": "#000000",
-      "clickThrough": false
+      "clickThrough": false,
+      "barInsetPadding": 10
     }
   ],
   "desktopClockEnabled": false,

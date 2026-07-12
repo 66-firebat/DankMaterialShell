@@ -18,7 +18,7 @@ PluginComponent {
     // ── Colors ──────────────────────────────────────────────────────────────
 
     readonly property color idleFg:  "#444444"
-    readonly property color recFg:   "#ef4444"
+    readonly property color recFg:   "#ff4400"
 
     // ── Startup Detection ────────────────────────────────────────────────────
     // Checks if wf-recorder survived a shell restart by looking for the
@@ -75,10 +75,9 @@ PluginComponent {
     }
 
     function toggleWithQuery(query: string): void {
-        // Stop recording — query is ignored
+        // Stop recording — keep elapsed time and file size frozen at last values,
+        // only change icon and color back to idle state
         root.recording = false;
-        root.elapsedText = "00:00:00";
-        root.fileSizeText = "0.0 MB";
 
         elapsedTimer.stop();
         fileSizeTimer.stop();
@@ -147,9 +146,10 @@ PluginComponent {
             spacing: Theme.spacingS
 
             Text {
-                text: root.recording ? "󱫤" : "󱫡"
+                text: root.recording ? "󰙧" : "󰣿"
                 font.family: "Nerd Font Mono"
                 font.pixelSize: Theme.iconSize
+                font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -158,6 +158,7 @@ PluginComponent {
                 text: root.elapsedText + " • " + root.fileSizeText
                 font.family: "Nerd Font Mono"
                 font.pixelSize: Theme.fontSizeSmall
+                font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -169,9 +170,10 @@ PluginComponent {
             spacing: Theme.spacingXS
 
             Text {
-                text: root.recording ? "󱫤" : "󱫡"
+                text: root.recording ? "󰙧" : "󰣿"
                 font.family: "Nerd Font Mono"
                 font.pixelSize: Theme.iconSize
+                font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
                 anchors.horizontalCenter: parent.horizontalCenter
             }
@@ -180,6 +182,7 @@ PluginComponent {
                 text: root.elapsedText
                 font.family: "Nerd Font Mono"
                 font.pixelSize: Theme.fontSizeTiny
+                font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
                 anchors.horizontalCenter: parent.horizontalCenter
             }
@@ -188,6 +191,7 @@ PluginComponent {
                 text: root.fileSizeText
                 font.family: "Nerd Font Mono"
                 font.pixelSize: Theme.fontSizeTiny
+                font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
                 anchors.horizontalCenter: parent.horizontalCenter
             }
