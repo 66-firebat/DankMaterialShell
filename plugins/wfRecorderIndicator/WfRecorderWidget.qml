@@ -19,7 +19,6 @@ PluginComponent {
 
     readonly property color idleFg:  "#444444"
     readonly property color recFg:   "#ef4444"
-    readonly property color bgColor: "#2b2b2b"
 
     // ── Startup Detection ────────────────────────────────────────────────────
     // Checks if wf-recorder survived a shell restart by looking for the
@@ -54,32 +53,35 @@ PluginComponent {
         }
     }
 
-    // ── IPC Handler (called from keymaps.lua via `qs ipc call ...`) ──────────
+    // ── IPC Handlers ─────────────────────────────────────────────────────────
+    // Called from keymaps.lua via:
+    //   dms ipc call widget openQuery wfRecorderIndicator "<video-path>"
+    //   dms ipc call widget toggleQuery wfRecorderIndicator "stop"
 
-    IpcHandler {
-        target: "wfRecorderIndicator"
+    function openWithQuery(query: string): void {
+        // Start recording — query is the video file path
+        if (!query || query.length === 0) return;
 
-        function startRecording(videoPath: string): void {
-            root.videoPath = videoPath;
-            root.startTime = new Date().getTime();
-            root.recording = true;
+        root.videoPath = query;
+        root.startTime = new Date().getTime();
+        root.recording = true;
 
-            // Prime the file-size checker command
-            fileSizeChecker.command = ["bash", "-c",
-                "stat -c %s \"" + videoPath + "\" 2>/dev/null || echo N/A"];
+        // Prime the file-size checker command
+        fileSizeChecker.command = ["bash", "-c",
+            "stat -c %s \"" + query + "\" 2>/dev/null || echo N/A"];
 
-            elapsedTimer.start();
-            fileSizeTimer.start();
-        }
+        elapsedTimer.start();
+        fileSizeTimer.start();
+    }
 
-        function stopRecording(): void {
-            root.recording = false;
-            root.elapsedText = "00:00:00";
-            root.fileSizeText = "0.0 MB";
+    function toggleWithQuery(query: string): void {
+        // Stop recording — query is ignored
+        root.recording = false;
+        root.elapsedText = "00:00:00";
+        root.fileSizeText = "0.0 MB";
 
-            elapsedTimer.stop();
-            fileSizeTimer.stop();
-        }
+        elapsedTimer.stop();
+        fileSizeTimer.stop();
     }
 
     // ── Elapsed Timer (10ms / centisecond resolution) ───────────────────────
@@ -119,7 +121,7 @@ PluginComponent {
                     }
                 } else if (text === "N/A") {
                     root.fileSizeText = "N/A";
-                } // else: keep existing value (e.g. initial "0.0 MB" or last known)
+                }
             }
         }
     }
@@ -141,70 +143,53 @@ PluginComponent {
     // ── Pills ───────────────────────────────────────────────────────────────
 
     horizontalBarPill: Component {
-        Rectangle {
-            color: root.bgColor
-            radius: 6
-            height: 24
-            implicitWidth: row.implicitWidth + 12
+        Row {
+            spacing: Theme.spacingS
 
-            Row {
-                id: row
-                spacing: 6
+            Text {
+                text: root.recording ? "󱫤" : "󱫡"
+                font.family: "Nerd Font Mono"
+                font.pixelSize: Theme.iconSize
+                color: root.recording ? root.recFg : root.idleFg
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 6
+            }
 
-                Text {
-                    text: root.recording ? "󱫤" : "󱫡"
-                    font.family: "Symbols Nerd Font"
-                    font.pixelSize: Theme.iconSize
-                    color: root.recording ? root.recFg : root.idleFg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                StyledText {
-                    text: root.elapsedText + " • " + root.fileSizeText
-                    font.pixelSize: Theme.fontSizeSmall
-                    color: root.recording ? root.recFg : root.idleFg
-                    anchors.verticalCenter: parent.verticalCenter
-                }
+            StyledText {
+                text: root.elapsedText + " • " + root.fileSizeText
+                font.family: "Nerd Font Mono"
+                font.pixelSize: Theme.fontSizeSmall
+                color: root.recording ? root.recFg : root.idleFg
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
     }
 
     verticalBarPill: Component {
-        Rectangle {
-            color: root.bgColor
-            radius: 6
-            width: 48
-            height: col.implicitHeight + 10
+        Column {
+            spacing: Theme.spacingXS
 
-            Column {
-                id: col
-                spacing: 2
-                anchors.centerIn: parent
+            Text {
+                text: root.recording ? "󱫤" : "󱫡"
+                font.family: "Nerd Font Mono"
+                font.pixelSize: Theme.iconSize
+                color: root.recording ? root.recFg : root.idleFg
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
 
-                Text {
-                    text: root.recording ? "󱫤" : "󱫡"
-                    font.family: "Symbols Nerd Font"
-                    font.pixelSize: Theme.iconSize
-                    color: root.recording ? root.recFg : root.idleFg
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
+            StyledText {
+                text: root.elapsedText
+                font.family: "Nerd Font Mono"
+                font.pixelSize: Theme.fontSizeTiny
+                color: root.recording ? root.recFg : root.idleFg
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
 
-                StyledText {
-                    text: root.elapsedText
-                    font.pixelSize: Theme.fontSizeTiny
-                    color: root.recording ? root.recFg : root.idleFg
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
-
-                StyledText {
-                    text: root.fileSizeText
-                    font.pixelSize: Theme.fontSizeTiny
-                    color: root.recording ? root.recFg : root.idleFg
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
+            StyledText {
+                text: root.fileSizeText
+                font.family: "Nerd Font Mono"
+                font.pixelSize: Theme.fontSizeTiny
+                color: root.recording ? root.recFg : root.idleFg
+                anchors.horizontalCenter: parent.horizontalCenter
             }
         }
     }
