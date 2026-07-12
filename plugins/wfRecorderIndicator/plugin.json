@@ -3,7 +3,7 @@
   "name": "wf-recorder Indicator",
   "description": "Shows a recording icon when wf-recorder is active",
   "version": "1.0.0",
-  "author": "you",
+  "author": "firebat",
   "icon": "widgets",
   "type": "widget",
   "component": "./WfRecorderWidget.qml"
