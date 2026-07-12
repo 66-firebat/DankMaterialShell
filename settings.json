@@ -567,7 +567,7 @@
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
-          "id": "clock",
+          "id": "wfRecorderIndicator",
           "enabled": true
         },
         {
@@ -576,7 +576,7 @@
           "size": 20
         },
         {
-          "id": "wfRecorderIndicator",
+          "id": "clock",
           "enabled": true
         },
         {
