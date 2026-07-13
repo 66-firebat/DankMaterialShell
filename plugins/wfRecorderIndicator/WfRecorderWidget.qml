@@ -17,8 +17,8 @@ PluginComponent {
 
     // ── Colors ──────────────────────────────────────────────────────────────
 
-    readonly property color idleFg:  "#444444"
-    readonly property color recFg:   "#ff4400"
+    readonly property color idleFg:  "#ff4400"
+    readonly property color recFg:   "#1bfd9c"
 
     // ── Startup Detection ────────────────────────────────────────────────────
     // Checks if wf-recorder survived a shell restart by looking for the
