@@ -12,7 +12,7 @@ PluginComponent {
     property bool recording: false
     property string videoPath: ""
     property real startTime: 0
-    property string elapsedText: "00:00:00"
+    property string elapsedText: "00:00"
     property string fileSizeText: "0.0 MB"
 
     // ── Colors ──────────────────────────────────────────────────────────────
@@ -46,8 +46,8 @@ PluginComponent {
                     fileSizeChecker.command = ["bash", "-c",
                         "stat -c %s \"" + path + "\" 2>/dev/null || echo N/A"];
 
+                    fileSizeChecker.running = true;
                     elapsedTimer.start();
-                    fileSizeTimer.start();
                 }
             }
         }
@@ -70,8 +70,8 @@ PluginComponent {
         fileSizeChecker.command = ["bash", "-c",
             "stat -c %s \"" + query + "\" 2>/dev/null || echo N/A"];
 
+        fileSizeChecker.running = true;
         elapsedTimer.start();
-        fileSizeTimer.start();
     }
 
     function toggleWithQuery(query: string): void {
@@ -79,32 +79,37 @@ PluginComponent {
         // only change icon and color back to idle state
         root.recording = false;
 
+        fileSizeChecker.running = false;
         elapsedTimer.stop();
-        fileSizeTimer.stop();
     }
 
-    // ── Elapsed Timer (10ms / centisecond resolution) ───────────────────────
+    // ── Elapsed Timer (1-second resolution / MM:SS display) ─────────────────
+    // Also triggers a file size check on each tick for once-per-second polling.
 
     Timer {
         id: elapsedTimer
-        interval: 10
+        interval: 1000
         running: false
         repeat: true
         onTriggered: {
-            var elapsedMs = new Date().getTime() - root.startTime;
-            var totalCs = Math.floor(elapsedMs / 10);       // 1 centisecond = 10ms
-            var minutes  = Math.floor(totalCs / 6000);       // 6000 cs per minute
-            var seconds  = Math.floor((totalCs % 6000) / 100);
-            var cs       = totalCs % 100;
+            var elapsedSec = Math.floor((new Date().getTime() - root.startTime) / 1000);
+            var minutes = Math.floor(elapsedSec / 60);
+            var seconds = elapsedSec % 60;
 
             root.elapsedText =
                 String(minutes).padStart(2, '0') + ":" +
-                String(seconds).padStart(2, '0') + ":" +
-                String(cs).padStart(2, '0');
+                String(seconds).padStart(2, '0');
+
+            // Trigger a file size check once per second
+            if (root.recording && !fileSizeChecker.running) {
+                fileSizeChecker.running = true;
+            }
         }
     }
 
-    // ── File Size Polling (every 5 seconds) ─────────────────────────────────
+    // ── File Size Polling (timer-driven, once per second) ───────────────────
+    // Started by openWithQuery / startupDetector for the initial check,
+    // then re-triggered by elapsedTimer.onTriggered every 1 second.
 
     Process {
         id: fileSizeChecker
@@ -122,20 +127,6 @@ PluginComponent {
                     root.fileSizeText = "N/A";
                 }
             }
-        }
-    }
-
-    Timer {
-        id: fileSizeTimer
-        interval: 5000
-        running: false
-        repeat: true
-        onTriggered: {
-            // Restart the process to re-check file size
-            fileSizeChecker.running = false;
-            Qt.callLater(function() {
-                fileSizeChecker.running = true;
-            });
         }
     }
 
