@@ -2,44 +2,50 @@
 
 ## Bug Report
 
-**When toggling the screen recording ON and then OFF, the entire DankMaterialShell UI freezes.**
+**When toggling the screen recording ON and then OFF, the entire system freezes — even Ctrl+Alt+F3 TTY switching does not work.**
 
 ## Root Cause Analysis
 
-### Issue 1 (CRITICAL): Process lifecycle race — the primary freeze trigger
+The freeze is caused by a **cascading blocking chain** rooted in `keymaps.lua`, not in the QML widget code itself.
 
-**File**: `WfRecorderWidget.qml`
+### Issue 1 (CRITICAL): `os.execute` in keymaps.lua blocks Hyprland's main thread
+
+**File**: `keymaps.lua`
+
+```lua
+os.execute("pkill -INT wf-recorder")
+os.execute("dms ipc call widget toggleQuery wfRecorderIndicator stop")
+```
+
+`os.execute` in Lua is synchronous — it calls `fork()` + `exec()` + `waitpid()`. The `waitpid()` blocks the calling thread until the child process exits. In Hyprland, Lua keybind callbacks run on the **main display thread**. When `os.execute` blocks, Hyprland freezes.
+
+**The cascade to full system freeze:**
+
+```
+Hyprland main thread
+  └─ os.execute("dms ipc call widget ...")   ← BLOCKING waitpid()
+       └─ fork() + exec("dms") + waitpid()
+            └─ dms CLI sends IPC to DMS daemon via Unix socket
+                 └─ DMS processes IPC → calls toggleWithQuery()
+                 └─ DMS sends response back
+            └─ dms CLI exits
+       └─ waitpid() returns, Hyprland continues
+```
+
+If the `dms` CLI takes any noticeable time (e.g., >50ms), Hyprland's event loop stalls. If the `dms` CLI **hangs** (socket issue, DMS daemon busy, etc.), Hyprland hangs **indefinitely** in `waitpid()` (D state).
+
+Because Hyprland holds the **DRM master** (the kernel-level GPU/display lock), when it enters D state, the kernel **cannot reassign the DRM master to a different VT**. This is why Ctrl+Alt+F3 doesn't work — the VT switch fails because the current master is stuck.
+
+### Issue 2 (SECONDARY): Process lifecycle race in the original QML code
+
+**File**: `WfRecorderWidget.qml` (ORIGINAL code before patch)
 **Location**: `fileSizeTimer.onTriggered`
 
-The `fileSizeChecker` process is restarted using a fragile pattern:
-
-```qml
-onTriggered: {
-    fileSizeChecker.running = false;       // sends SIGTERM
-    Qt.callLater(function() {
-        fileSizeChecker.running = true;    // starts new process
-    });
-}
-```
-
-Per the Quickshell docs, `running = false` **sends SIGTERM** to the child process. Switching `running` off and back on in rapid succession — especially with `Qt.callLater` deferring the restart — creates a race where:
-
-1. The old process gets SIGTERM but hasn't fully exited yet
-2. A new `QProcess` is spawned before the old one's internal state is cleaned up
-3. This corrupts Quickshell's internal `QProcess` state machine, causing a **Qt event loop deadlock**
-
-The Quickshell docs explicitly recommend the `onRunningChanged` signal for looping:
-
-```qml
-Process {
-    running: true
-    onRunningChanged: if (!running) running = true
-}
-```
+The original code had an additional race where `fileSizeChecker.running = false` (SIGTERM) raced against `Qt.callLater` restart, but this only compounded the existing `os.execute` blocking issue.
 
 ---
 
-### Issue 2 (CRITICAL): `Qt.callLater` survives past `toggleWithQuery`
+### Issue 3 (SECONDARY — FIXED): `Qt.callLater` survives past `toggleWithQuery`
 
 **File**: `WfRecorderWidget.qml`
 **Locations**: `fileSizeTimer.onTriggered` + `toggleWithQuery()`
@@ -54,7 +60,7 @@ When the user toggles OFF:
 
 ---
 
-### Issue 3 (HIGH): 10ms timer (100Hz) starves the event loop
+### Issue 4 (SECONDARY — FIXED): 10ms timer (100Hz) starves the event loop
 
 **File**: `WfRecorderWidget.qml`
 **Location**: `elapsedTimer` (`interval: 10`)
@@ -148,7 +154,7 @@ Additionally, the display format changes from `MM:SS:CC` (centiseconds, requirin
 
 ---
 
-### Issue 4 (MEDIUM): `fileSizeChecker` never explicitly started
+### Issue 5 (FIXED): `fileSizeChecker` never explicitly started
 
 **File**: `WfRecorderWidget.qml`
 **Locations**: `openWithQuery()` and `startupDetector.onStreamFinished`
@@ -166,7 +172,7 @@ The command is updated but `running` remains `false`. The first file size poll o
 
 ---
 
-### Issue 5 (MEDIUM): No `fileSizeChecker` cleanup on stop
+### Issue 6 (FIXED): No `fileSizeChecker` cleanup on stop
 
 **File**: `WfRecorderWidget.qml`
 **Location**: `toggleWithQuery()`
@@ -185,6 +191,24 @@ If a stale `Qt.callLater` starts `fileSizeChecker` after the timer is stopped, t
 ---
 
 ## Proposed Fixes
+
+### Fix 0: Background the `dms ipc call` commands in keymaps.lua
+
+**File**: `keymaps.lua`
+
+Add `&` to all `dms ipc call` and `pkill` commands so they run in the background. The shell returns immediately, `os.execute` returns immediately, and Hyprland never blocks:
+
+```lua
+-- Before (blocks Hyprland):
+os.execute("pkill -INT wf-recorder")
+os.execute("dms ipc call widget toggleQuery wfRecorderIndicator stop")
+
+-- After (fire-and-forget):
+os.execute("pkill -INT wf-recorder &")
+os.execute("dms ipc call widget toggleQuery wfRecorderIndicator stop &")
+```
+
+This breaks the cascading freeze chain by making every external call non-blocking.
 
 ### Fix 1: Trigger file size check from the 1-second elapsed timer (Option B)
 
@@ -280,9 +304,8 @@ Idle:  "00:00 • 0.0 MB"    (was "00:00:00 • 0.0 MB")
 
 | File | Changes |
 |------|---------|
+| `keymaps.lua` | Add `&` to all `os.execute` calls (`pkill`, `dms ipc call widget openQuery`, `dms ipc call widget toggleQuery`) to prevent Hyprland main thread blocking |
 | `WfRecorderWidget.qml` | Remove `fileSizeTimer`, simplify `fileSizeChecker` (remove `onRunningChanged` loop), add file size trigger inside `elapsedTimer.onTriggered`, change `elapsedTimer.interval` from 10ms to 1000ms, change display format from `MM:SS:CC` to `MM:SS`, update default `elapsedText` from `"00:00:00"` to `"00:00"`, add explicit `running = true/false` in `openWithQuery`/`toggleWithQuery` |
-
-No changes needed in `keymaps.lua` — the IPC calls are correct; the issue is entirely in the widget's process lifecycle management.
 
 ---
 
