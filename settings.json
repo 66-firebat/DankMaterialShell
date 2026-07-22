@@ -172,10 +172,10 @@
   "workspaceActiveAppHighlightEnabled": false,
   "workspaceColorMode": "custom",
   "workspaceFocusedCustomColor": "#1cffffff",
-  "workspaceOccupiedColorMode": "s",
-  "workspaceOccupiedCustomColor": "#625B71",
-  "workspaceUnfocusedColorMode": "schh",
-  "workspaceUnfocusedCustomColor": "#49454E",
+  "workspaceOccupiedColorMode": "custom",
+  "workspaceOccupiedCustomColor": "#00625b71",
+  "workspaceUnfocusedColorMode": "custom",
+  "workspaceUnfocusedCustomColor": "#212121",
   "workspaceUrgentColorMode": "custom",
   "workspaceUrgentCustomColor": "#1efd9c",
   "workspaceFocusedBorderEnabled": false,
@@ -488,9 +488,9 @@
   "notificationTimeoutNormal": 5000,
   "notificationTimeoutCritical": 0,
   "notificationCompactMode": true,
-  "notificationShowTimeoutBar": false,
+  "notificationShowTimeoutBar": true,
   "notificationDedupeEnabled": true,
-  "notificationPopupPosition": 5,
+  "notificationPopupPosition": -1,
   "notificationAnimationSpeed": 0,
   "notificationCustomAnimationDuration": 400,
   "notificationHistoryEnabled": true,
@@ -589,6 +589,11 @@
         {
           "id": "clipboard",
           "enabled": false
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
         },
         {
           "id": "workspaceSwitcher",
@@ -833,7 +838,7 @@
   "launcherPluginOrder": [],
   "frameEnabled": true,
   "frameThickness": 7,
-  "frameRounding": 27,
+  "frameRounding": 24,
   "frameColor": "#2b2b2b",
   "frameOpacity": 0.44,
   "frameScreenPreferences": [
