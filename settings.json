@@ -490,7 +490,7 @@
   "notificationCompactMode": true,
   "notificationShowTimeoutBar": true,
   "notificationDedupeEnabled": true,
-  "notificationPopupPosition": -1,
+  "notificationPopupPosition": 5,
   "notificationAnimationSpeed": 0,
   "notificationCustomAnimationDuration": 400,
   "notificationHistoryEnabled": true,
@@ -502,7 +502,7 @@
   "notificationRules": [],
   "notificationFocusedMonitor": false,
   "osdAlwaysShowValue": false,
-  "osdPosition": 5,
+  "osdPosition": 7,
   "osdVolumeEnabled": true,
   "osdMediaVolumeEnabled": true,
   "osdMediaPlaybackEnabled": false,
@@ -567,7 +567,7 @@
       "id": "default",
       "name": "Main Bar",
       "enabled": true,
-      "position": 1,
+      "position": 0,
       "screenPreferences": [
         "all"
       ],
@@ -670,7 +670,7 @@
       "shadowCustomColor": "#000000",
       "clickThrough": false,
       "barInsetPadding": 10,
-      "useOverlayLayer": true,
+      "useOverlayLayer": false,
       "hoverPopouts": true
     }
   ],
@@ -839,7 +839,7 @@
   "frameEnabled": true,
   "frameThickness": 7,
   "frameRounding": 24,
-  "frameColor": "#2b2b2b",
+  "frameColor": "#002b2b2b",
   "frameOpacity": 0.44,
   "frameScreenPreferences": [
     "all"
@@ -848,7 +848,7 @@
   "frameShowOnOverview": false,
   "frameBlurEnabled": true,
   "frameCloseGaps": false,
-  "frameLauncherEmergeSide": "top",
+  "frameLauncherEmergeSide": "bottom",
   "frameLauncherArcExtender": true,
   "frameLauncherEdgeHover": false,
   "frameMode": "connected",
