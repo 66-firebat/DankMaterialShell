@@ -138,7 +138,7 @@ PluginComponent {
 
             Text {
                 text: root.recording ? "󰙧" : "󰣿"
-                font.family: "ComicShannsMono Nerd Font"
+                font.family: "FreeSans"
                 font.pixelSize: Theme.iconSize
                 font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
@@ -147,7 +147,7 @@ PluginComponent {
 
             StyledText {
                 text: root.elapsedText + " • " + root.fileSizeText
-                font.family: "ComicShannsMono Nerd Font"
+                font.family: "FreeSans"
                 font.pixelSize: Theme.fontSizeSmall
                 font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
@@ -162,7 +162,7 @@ PluginComponent {
 
             Text {
                 text: root.recording ? "󰙧" : "󰣿"
-                font.family: "ComicShannsMono Nerd Font"
+                font.family: "FreeSans"
                 font.pixelSize: Theme.iconSize
                 font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
@@ -171,7 +171,7 @@ PluginComponent {
 
             StyledText {
                 text: root.elapsedText
-                font.family: "ComicShannsMono Nerd Font"
+                font.family: "FreeSans"
                 font.pixelSize: Theme.fontSizeTiny
                 font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
@@ -180,7 +180,7 @@ PluginComponent {
 
             StyledText {
                 text: root.fileSizeText
-                font.family: "ComicShannsMono Nerd Font"
+                font.family: "FreeSans"
                 font.pixelSize: Theme.fontSizeTiny
                 font.weight: Font.Normal
                 color: root.recording ? root.recFg : root.idleFg
