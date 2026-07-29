@@ -1,7 +1,7 @@
 {
   "currentThemeName": "custom",
   "currentThemeCategory": "custom",
-  "customThemeFile": "/home/fireshark/.config/DankMaterialShell/fireshark.json",
+  "customThemeFile": "/home/firebat/.config/DankMaterialShell/fireshark.json",
   "registryThemeVariants": {},
   "matugenScheme": "scheme-tonal-spot",
   "matugenContrast": 0,
@@ -574,6 +574,11 @@
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
           "id": "wfRecorderIndicator",
           "enabled": true
         },
@@ -603,16 +608,6 @@
       "centerWidgets": [],
       "rightWidgets": [
         {
-          "id": "battery",
-          "enabled": true,
-          "showBatteryPercent": true,
-          "showBatteryPercentOnlyOnBattery": false,
-          "showBatteryTime": false,
-          "showBatteryTimeOnlyOnBattery": false,
-          "batteryPillStyle": true,
-          "batteryPillPercentSign": true
-        },
-        {
           "id": "spacer",
           "enabled": true,
           "size": 20
@@ -636,6 +631,16 @@
         {
           "id": "controlCenterButton",
           "enabled": true
+        },
+        {
+          "id": "battery",
+          "enabled": true,
+          "showBatteryPercent": true,
+          "showBatteryPercentOnlyOnBattery": false,
+          "showBatteryTime": false,
+          "showBatteryTimeOnlyOnBattery": false,
+          "batteryPillStyle": false,
+          "batteryPillPercentSign": false
         }
       ],
       "spacing": 6,
@@ -755,6 +760,9 @@
   "desktopWidgetGridSettings": {
     "HDMI-A-1": {
       "enabled": true
+    },
+    "eDP-1": {
+      "enabled": true
     }
   },
   "desktopWidgetInstances": [
@@ -820,6 +828,12 @@
           "height": 100,
           "x": 0,
           "y": 0
+        },
+        "eDP-1": {
+          "width": 600,
+          "height": 440,
+          "x": 240,
+          "y": 160
         }
       }
     }
