@@ -603,6 +603,16 @@
       "centerWidgets": [],
       "rightWidgets": [
         {
+          "id": "battery",
+          "enabled": true,
+          "showBatteryPercent": true,
+          "showBatteryPercentOnlyOnBattery": false,
+          "showBatteryTime": false,
+          "showBatteryTimeOnlyOnBattery": false,
+          "batteryPillStyle": true,
+          "batteryPillPercentSign": true
+        },
+        {
           "id": "spacer",
           "enabled": true,
           "size": 20
