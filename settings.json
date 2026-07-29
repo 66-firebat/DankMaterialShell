@@ -805,7 +805,7 @@
         ],
         "viewMode": "standard",
         "colorMode": "primary",
-        "backgroundOpacity": 99,
+        "backgroundOpacity": 0,
         "showPressure": true,
         "showOnOverlay": false,
         "clickThrough": false,
