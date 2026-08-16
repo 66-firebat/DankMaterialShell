@@ -569,7 +569,10 @@
       "enabled": true,
       "position": 0,
       "screenPreferences": [
-        "all"
+        {
+          "name": "__MONITOR_NAME__",
+          "model": "__MONITOR_MODEL__"
+        }
       ],
       "showOnLastDisplay": true,
       "leftWidgets": [
@@ -834,6 +837,12 @@
           "height": 440,
           "x": 240,
           "y": 160
+        },
+        "DP-1": {
+          "width": 853.74609375,
+          "height": 452.03125,
+          "x": 600,
+          "y": 300
         }
       }
     }
