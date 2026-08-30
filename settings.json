@@ -871,7 +871,7 @@
   "launcherPluginOrder": [],
   "frameEnabled": true,
   "frameThickness": 7,
-  "frameRounding": 24,
+  "frameRounding": 0,
   "frameColor": "#002b2b2b",
   "frameOpacity": 0.44,
   "frameScreenPreferences": [
