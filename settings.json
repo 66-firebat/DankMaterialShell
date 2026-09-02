@@ -873,7 +873,7 @@
   "frameThickness": 7,
   "frameRounding": 0,
   "frameColor": "#002b2b2b",
-  "frameOpacity": 0.44,
+  "frameOpacity": 1.00,
   "frameScreenPreferences": [
     "all"
   ],
@@ -881,7 +881,7 @@
   "frameShowOnOverview": false,
   "frameBlurEnabled": true,
   "frameCloseGaps": false,
-  "frameLauncherEmergeSide": "bottom",
+  "frameLauncherEmergeSide": "top",
   "frameLauncherArcExtender": true,
   "frameLauncherEdgeHover": false,
   "frameMode": "connected",
