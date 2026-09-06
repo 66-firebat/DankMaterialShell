@@ -577,6 +577,35 @@
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
+          "id": "workspaceSwitcher",
+          "enabled": true
+        },
+        {
+          "id": "clipboard",
+          "enabled": false
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        }
+      ],
+      "centerWidgets": [],
+      "rightWidgets": [
+        {
+          "id": "music",
+          "enabled": true
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
+          "id": "clock",
+          "enabled": true
+        },
+        {
           "id": "spacer",
           "enabled": true,
           "size": 20
@@ -591,36 +620,7 @@
           "size": 20
         },
         {
-          "id": "clock",
-          "enabled": true
-        },
-        {
-          "id": "clipboard",
-          "enabled": false
-        },
-        {
-          "id": "spacer",
-          "enabled": true,
-          "size": 20
-        },
-        {
-          "id": "workspaceSwitcher",
-          "enabled": true
-        }
-      ],
-      "centerWidgets": [],
-      "rightWidgets": [
-        {
-          "id": "spacer",
-          "enabled": true,
-          "size": 20
-        },
-        {
           "id": "notificationButton",
-          "enabled": true
-        },
-        {
-          "id": "music",
           "enabled": true
         },
         {
