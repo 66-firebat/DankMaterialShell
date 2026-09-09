@@ -577,6 +577,15 @@
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
+          "id": "dankKDEConnect",
+          "enabled": true
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
           "id": "workspaceSwitcher",
           "enabled": true
         },
@@ -651,7 +660,7 @@
       "bottomGap": 10,
       "transparency": 1,
       "widgetTransparency": 0,
-      "squareCorners": false,
+      "squareCorners": true,
       "noBackground": false,
       "maximizeWidgetIcons": true,
       "maximizeWidgetText": false,
