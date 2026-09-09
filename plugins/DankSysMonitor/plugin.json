@@ -1,0 +1,12 @@
+{
+  "id": "dankSysMonitor",
+  "name": "System Monitor",
+  "description": "CPU and RAM usage in DankBar",
+  "version": "1.0.0",
+  "author": "Firebat",
+  "icon": "monitor_heart",
+  "type": "widget",
+  "component": "./SysMonitor.qml",
+  "settings": "./SysMonitorSettings.qml",
+  "permissions": ["settings_read", "settings_write", "process"]
+}
