@@ -41,7 +41,11 @@ PluginComponent {
     function poll() {
         Proc.runCommand(
             "dankSysMonitor.poll",
-            ["bash", "-c", "$HOME/.config/DankMaterialShell/plugins/DankSysMonitor/sysmon.sh"],
+            // sysmon.sh ships without the executable bit on nix-managed (store)
+            // installs, and `bash -c <path>` execs the file directly (fails with
+            // exit code 126 / "Permission denied"). Invoke bash explicitly so the
+            // script is read as an argument and runs regardless of file mode.
+            ["bash", "-c", "bash \"$HOME/.config/DankMaterialShell/plugins/DankSysMonitor/sysmon.sh\""],
             (stdout, exitCode) => {
                 if (exitCode !== 0 || !stdout || !stdout.trim())
                     return

@@ -3,7 +3,7 @@
     "enabled": false
   },
   "dankKDEConnect": {
-    "enabled": false,
+    "enabled": true,
     "selectedDeviceId": "42dbe417c23c4c549d7d2aabf908a904"
   },
   "alarmClock": {
@@ -25,6 +25,9 @@
     "enabled": false
   },
   "dankDesktopWeather": {
+    "enabled": true
+  },
+  "dankSysMonitor": {
     "enabled": true
   }
 }

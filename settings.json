@@ -641,6 +641,10 @@
           "enabled": true
         },
         {
+          "id": "dankSysMonitor",
+          "enabled": true
+        },
+        {
           "id": "controlCenterButton",
           "enabled": true
         },
@@ -882,7 +886,7 @@
   "frameThickness": 7,
   "frameRounding": 0,
   "frameColor": "#002b2b2b",
-  "frameOpacity": 1.00,
+  "frameOpacity": 1.0,
   "frameScreenPreferences": [
     "all"
   ],
