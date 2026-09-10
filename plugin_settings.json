@@ -29,5 +29,8 @@
   },
   "dankSysMonitor": {
     "enabled": true
+  },
+  "dankPowerMonitor": {
+    "enabled": true
   }
 }

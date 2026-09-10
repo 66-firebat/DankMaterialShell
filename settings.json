@@ -611,6 +611,15 @@
           "size": 20
         },
         {
+          "id": "dankPowerMonitor",
+          "enabled": true
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
           "id": "clock",
           "enabled": true
         },
@@ -638,10 +647,6 @@
         },
         {
           "id": "memUsage",
-          "enabled": true
-        },
-        {
-          "id": "dankSysMonitor",
           "enabled": true
         },
         {

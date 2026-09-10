@@ -1,0 +1,13 @@
+{
+  "id": "dankPowerMonitor",
+  "name": "Power Monitor",
+  "description": "Rolling 8-minute power-draw bar with temperature-colored cells",
+  "version": "1.0.0",
+  "author": "fireshark",
+  "icon": "bolt",
+  "type": "widget",
+  "capabilities": ["dankbar-widget"],
+  "component": "./PowerMonitor.qml",
+  "settings": "./PowerMonitorSettings.qml",
+  "permissions": ["settings_read", "settings_write", "process"]
+}
