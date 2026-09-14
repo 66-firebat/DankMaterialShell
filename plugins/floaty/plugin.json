@@ -1,0 +1,21 @@
+{
+  "id": "floaty",
+  "name": "Floaty",
+  "description": "A feature-rich reference image tool to float images, screenshots, and vector graphics on top of all windows.",
+  "version": "2.0.0",
+  "author": "Loc Huynh",
+  "icon": "cloud",
+  "type": "daemon",
+  "capabilities": [
+    "dankbar-widget",
+    "ipc"
+  ],
+  "component": "./FloatyPlugin.qml",
+  "settings": "./FloatySettings.qml",
+  "permissions": [
+    "settings_read",
+    "settings_write",
+    "process",
+    "clipboard_read"
+  ]
+}
