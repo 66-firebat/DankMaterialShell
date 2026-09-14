@@ -346,6 +346,7 @@ PanelWindow {
             paused: window.isMinimized
             antialiasing: true
             smooth: true
+            mipmap: true
             opacity: window.imageLoaded ? 1 : 0
             visible: opacity > 0
 

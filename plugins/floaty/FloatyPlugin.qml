@@ -518,7 +518,7 @@ PluginComponent {
                         const tempBase = "/tmp/dms_floaty_pdf_" + timestamp + "_" + page;
                         const tempPng = tempBase + ".png";
                         
-                        Proc.runCommand("pdf-convert", ["pdftocairo", "-png", "-singlefile", "-f", "" + page, "-l", "" + page, path, tempBase], function(stdout, exitCode) {
+                        Proc.runCommand("pdf-convert", ["pdftocairo", "-png", "-r", "300", "-singlefile", "-f", "" + page, "-l", "" + page, path, tempBase], function(stdout, exitCode) {
                             if (exitCode === 0) {
                                 root._spawnWindow("file://" + tempPng);
                             } else {
@@ -552,7 +552,7 @@ PluginComponent {
                         const timestamp = Date.now();
                         const tempBase = "/tmp/dms_floaty_pdf_" + timestamp + "_1";
                         const tempPng = tempBase + ".png";
-                        Proc.runCommand("pdf-convert", ["pdftocairo", "-png", "-singlefile", "-f", "1", "-l", "1", path, tempBase], function(stdout, exitCode) {
+                        Proc.runCommand("pdf-convert", ["pdftocairo", "-png", "-r", "300", "-singlefile", "-f", "1", "-l", "1", path, tempBase], function(stdout, exitCode) {
                             if (exitCode === 0) {
                                 root._spawnWindow("file://" + tempPng);
                             } else {
