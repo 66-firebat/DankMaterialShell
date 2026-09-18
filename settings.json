@@ -570,11 +570,11 @@
       "position": 0,
       "screenPreferences": [
         {
-          "name": "__MONITOR_NAME__",
-          "model": "__MONITOR_MODEL__"
+          "name": "eDP-1",
+          "model": "NE120DRM-N28"
         }
       ],
-      "showOnLastDisplay": true,
+      "showOnLastDisplay": false,
       "leftWidgets": [
         {
           "id": "dankKDEConnect",
