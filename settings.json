@@ -11,7 +11,7 @@
   "blurBorderCustomColor": "#cddc39",
   "blurBorderOpacity": 0.07,
   "useAutoLocation": true,
-  "fontFamily": "JetBrainsMono Nerd Font",
+  "fontFamily": "FreeSans",
   "monoFontFamily": "FreeMono",
   "fontWeight": 900,
   "fontScale": 0.92,
