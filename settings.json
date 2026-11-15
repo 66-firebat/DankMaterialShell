@@ -1,6 +1,6 @@
 {
   "currentThemeName": "custom",
-  "customThemeFile": "__HOME__/.config/DankMaterialShell/fireshark.json",
+  "customThemeFile": "__HOME__/.config/dms/fireshark.json",
   "radiusStrength": 6,
   "clockFormat": "24h",
   "showSeconds": true,
