@@ -11,10 +11,10 @@
   "blurBorderCustomColor": "#cddc39",
   "blurBorderOpacity": 0.07,
   "useAutoLocation": true,
-  "fontFamily": "FreeSans",
+  "fontFamily": "Google Sans Flex ExtraBold",
   "monoFontFamily": "FreeMono",
   "fontWeight": 900,
-  "fontScale": 0.92,
+  "fontScale": 1.11,
   "textRenderQuality": 4,
   "lockScreenShowPowerActions": true,
   "dockConfigs": [
