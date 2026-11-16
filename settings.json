@@ -193,7 +193,7 @@
   "fontFamily": "Google Sans Flex ExtraBold",
   "monoFontFamily": "FreeMono",
   "fontWeight": 900,
-  "fontScale": 1.11,
+  "fontScale": 0.86,
   "textRenderQuality": 4,
   "lockScreenShowPowerActions": true,
   "dockConfigs": [
