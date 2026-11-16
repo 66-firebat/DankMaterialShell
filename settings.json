@@ -539,27 +539,17 @@
       "centerWidgets": [],
       "rightWidgets": [
         {
-          "id": "notificationButton",
+          "id": "dankStopwatch",
           "enabled": true
         },
         {
-          "id": "controlCenterButton",
+          "id": "spacer",
           "enabled": true,
-          "showNetworkIcon": true,
-          "showVpnIcon": true,
-          "showBluetoothIcon": true,
-          "showAudioIcon": true,
-          "showAudioPercent": false,
-          "showMicIcon": false,
-          "showMicPercent": true,
-          "showBrightnessIcon": false,
-          "showBrightnessPercent": false,
-          "showBatteryIcon": false,
-          "showPrinterIcon": false,
-          "showScreenSharingIcon": true,
-          "showIdleInhibitorIcon": false,
-          "showDoNotDisturbIcon": false,
-          "overflowMode": "always"
+          "size": 20
+        },
+        {
+          "id": "notificationButton",
+          "enabled": true
         },
         {
           "id": "spacer",
@@ -584,6 +574,30 @@
           "showBatteryTime": false,
           "showBatteryTimeOnlyOnBattery": false,
           "batteryPillPercentSign": false
+        },
+        {
+          "id": "controlCenterButton",
+          "enabled": true,
+          "showNetworkIcon": true,
+          "showVpnIcon": true,
+          "showBluetoothIcon": true,
+          "showAudioIcon": true,
+          "showAudioPercent": false,
+          "showMicIcon": false,
+          "showMicPercent": true,
+          "showBrightnessIcon": false,
+          "showBrightnessPercent": false,
+          "showBatteryIcon": false,
+          "showPrinterIcon": false,
+          "showScreenSharingIcon": true,
+          "showIdleInhibitorIcon": false,
+          "showDoNotDisturbIcon": false,
+          "overflowMode": "always"
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
         }
       ],
       "spacing": 6,
