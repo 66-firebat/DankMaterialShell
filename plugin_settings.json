@@ -16,6 +16,9 @@
     "minimumWidth": true
   },
   "wfRecorderIndicator": {
+    "enabled": false
+  },
+  "screenCaptureToolbar": {
     "enabled": true
   },
   "processList": {
