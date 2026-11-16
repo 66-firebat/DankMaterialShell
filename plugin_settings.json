@@ -21,6 +21,9 @@
   "screenCaptureToolbar": {
     "enabled": true
   },
+  "timeManager": {
+    "enabled": true
+  },
   "processList": {
     "enabled": false
   },

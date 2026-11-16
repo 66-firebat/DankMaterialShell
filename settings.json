@@ -540,7 +540,7 @@
       "centerWidgets": [],
       "rightWidgets": [
         {
-          "id": "dankStopwatch",
+          "id": "timeManager",
           "enabled": true
         },
         {
