@@ -457,6 +457,7 @@
   "osdPosition": 7,
   "osdPowerProfileEnabled": true,
   "updaterIntervalSeconds": 1800,
+  "connectedFrameBarStyleBackups": {},
   "barConfigs": [
     {
       "id": "default",
@@ -646,7 +647,9 @@
       "followInterfaceStyle": true,
       "widgetFollowInterfaceStyle": true,
       "attachToScreenEdge": false,
-      "widgetStyle": "segments"
+      "widgetStyle": "segments",
+      "island": false,
+      "dot": false
     }
   ],
   "desktopWidgetInstances": [
@@ -709,6 +712,7 @@
     "paste",
     "copy"
   ],
+  "frameEnabled": false,
   "frameThickness": 7,
   "frameRounding": 0,
   "frameBarSize": 42,
