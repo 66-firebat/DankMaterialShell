@@ -19,7 +19,15 @@
     "enabled": false
   },
   "screenCaptureToolbar": {
-    "enabled": true
+    "enabled": true,
+    "mediaMode": "photo",
+    "isVideoMode": false,
+    "captureMode": "monitor",
+    "videoFormat": "mp4",
+    "delaySeconds": 3,
+    "recPillScreenName": "HDMI-A-1",
+    "recPillX": 816,
+    "recPillY": 222
   },
   "timeManager": {
     "enabled": true,

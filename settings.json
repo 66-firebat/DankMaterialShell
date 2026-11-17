@@ -288,83 +288,109 @@
       "id": "user",
       "enabled": true,
       "w": 5,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 0
     },
     {
       "id": "settings",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 5,
+      "row": 0
     },
     {
       "id": "lock",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 6,
+      "row": 0
     },
     {
       "id": "power",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 7,
+      "row": 0
     },
     {
       "id": "volumeSlider",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 1
     },
     {
       "id": "brightnessSlider",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 4,
+      "row": 1
     },
     {
       "id": "wifi",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 2
     },
     {
       "id": "bluetooth",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 4,
+      "row": 2
     },
     {
       "id": "audioOutput",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 3
     },
     {
       "id": "audioInput",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 4,
+      "row": 3
     },
     {
       "id": "nightMode",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 0,
+      "row": 4
     },
     {
       "id": "darkMode",
       "enabled": true,
       "w": 4,
-      "h": 1
+      "h": 1,
+      "col": 4,
+      "row": 4
     },
     {
       "id": "edit",
       "enabled": true,
       "w": 1,
       "h": 1,
-      "small": true
+      "small": true,
+      "col": 0,
+      "row": 5
     },
     {
       "id": "runningApps",
@@ -374,6 +400,24 @@
       "small": true,
       "col": 0,
       "row": 6
+    },
+    {
+      "id": "builtin_display_profiles",
+      "enabled": true,
+      "w": 1,
+      "h": 1,
+      "col": 1,
+      "row": 5,
+      "small": true
+    },
+    {
+      "id": "idleInhibitor",
+      "enabled": true,
+      "w": 1,
+      "h": 1,
+      "col": 2,
+      "row": 5,
+      "small": true
     }
   ],
   "appIdSubstitutions": [],
@@ -480,12 +524,12 @@
           "showWorkspacePadding": true,
           "showWorkspaceApps": false,
           "workspaceDragReorder": true,
-          "maxWorkspaceIcons": 10,
+          "maxWorkspaceIcons": 1,
           "workspaceAppIconSizeOffset": 0,
           "groupWorkspaceApps": true,
           "groupActiveWorkspaceApps": true,
           "workspaceFollowFocus": false,
-          "showOccupiedWorkspacesOnly": false,
+          "showOccupiedWorkspacesOnly": true,
           "reverseScrolling": false,
           "dwlShowAllTags": false,
           "workspaceActiveAppHighlightEnabled": false,
@@ -501,27 +545,36 @@
           "workspaceFocusedBorderColor": "primary",
           "workspaceFocusedBorderCustomColor": "#6750A4",
           "workspaceFocusedBorderThickness": 1,
-          "workspaceUnfocusedMonitorSeparateAppearance": false,
-          "workspaceUnfocusedMonitorColorMode": "tertiaryContainer",
+          "workspaceUnfocusedMonitorSeparateAppearance": true,
+          "workspaceUnfocusedMonitorColorMode": "default",
           "workspaceUnfocusedMonitorFocusedCustomColor": "#6750A4",
-          "workspaceUnfocusedMonitorOccupiedColorMode": "schh",
+          "workspaceUnfocusedMonitorOccupiedColorMode": "none",
           "workspaceUnfocusedMonitorOccupiedCustomColor": "#625B71",
-          "workspaceUnfocusedMonitorUnfocusedColorMode": "custom",
+          "workspaceUnfocusedMonitorUnfocusedColorMode": "default",
           "workspaceUnfocusedMonitorUnfocusedCustomColor": "#49454E",
           "workspaceUnfocusedMonitorUrgentColorMode": "default",
           "workspaceUnfocusedMonitorUrgentCustomColor": "#B3261E",
           "workspaceUnfocusedMonitorBorderEnabled": true,
           "workspaceUnfocusedMonitorBorderColor": "primary",
           "workspaceUnfocusedMonitorBorderCustomColor": "#6750A4",
-          "workspaceUnfocusedMonitorBorderThickness": 4,
-          "workspaceIndicatorStyle": "pills",
+          "workspaceUnfocusedMonitorBorderThickness": 2,
+          "workspaceIndicatorStyle": "lines",
           "showSpecialWorkspaces": false,
-          "workspacePaddingCount": 10
+          "workspacePaddingCount": 6,
+          "workspaceIndicatorCompact": false,
+          "workspaceIndicatorRoundness": 100
         },
         {
           "id": "spacer",
           "enabled": true,
           "size": 20
+        },
+        {
+          "id": "focusedWindow",
+          "enabled": true,
+          "focusedWindowCompactMode": false,
+          "focusedWindowShowIcon": false,
+          "focusedWindowSize": 1
         },
         {
           "id": "dankKDEConnect",
