@@ -22,7 +22,10 @@
     "enabled": true
   },
   "timeManager": {
-    "enabled": true
+    "enabled": true,
+    "barFontSize": 19,
+    "displayMode": "progress",
+    "showPillIcon": false
   },
   "processList": {
     "enabled": false
