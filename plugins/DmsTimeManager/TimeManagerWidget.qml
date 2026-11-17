@@ -25,6 +25,10 @@ PluginComponent {
     property string displayMode: pluginData.displayMode || "time"
     property bool notifyMissedWhileAway: pluginData.notifyMissedWhileAway !== false
 
+    // ── Typography (configurable in DMS Settings → Plugins → Time Manager) ──
+    property int barFontSize: pluginData.barFontSize || Math.round(Theme.fontSizeMedium)
+    property int popoutFontSize: pluginData.popoutFontSize || 48
+
     // ── Cross-instance state ──
     PluginGlobalVar {
         id: globalRemainingMs
@@ -663,7 +667,7 @@ PluginComponent {
                     id: timeText
                     text: root.formatTime(globalRemainingMs.value)
                     color: root.pillColor
-                    font.pixelSize: Theme.fontSizeMedium
+                    font.pixelSize: root.barFontSize
                     isMonospace: true
                     anchors.verticalCenter: parent.verticalCenter
                     visible: root.displayMode !== "progress" || root.isIdle
@@ -754,7 +758,7 @@ PluginComponent {
                         id: timeTextV
                         text: root.formatTime(globalRemainingMs.value)
                         color: root.pillColor
-                        font.pixelSize: Theme.fontSizeSmall
+                        font.pixelSize: root.barFontSize
                         isMonospace: true
                         anchors.horizontalCenter: parent.horizontalCenter
                         visible: root.displayMode !== "progress" || root.isIdle
@@ -843,7 +847,7 @@ PluginComponent {
 
                 StyledText {
                     text: root.formatTimeShort(globalRemainingMs.value)
-                    font.pixelSize: 48
+                    font.pixelSize: root.popoutFontSize
                     font.weight: Font.Bold
                     isMonospace: true
                     color: root.pillColor

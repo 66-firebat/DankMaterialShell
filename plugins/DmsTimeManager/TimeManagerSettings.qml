@@ -146,6 +146,26 @@ PluginSettings {
         defaultValue: true
     }
 
+    SliderSetting {
+        settingKey: "barFontSize"
+        label: "Bar Font Size"
+        description: "Size of the time text in the bar pill (horizontal and vertical bars)"
+        defaultValue: Math.round(Theme.fontSizeMedium)
+        minimum: 8
+        maximum: 40
+        unit: "px"
+    }
+
+    SliderSetting {
+        settingKey: "popoutFontSize"
+        label: "Popout Font Size"
+        description: "Size of the large time display inside the popout"
+        defaultValue: 48
+        minimum: 20
+        maximum: 96
+        unit: "px"
+    }
+
     SelectionSetting {
         settingKey: "displayMode"
         label: "Bar Display"
