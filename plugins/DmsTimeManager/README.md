@@ -14,8 +14,50 @@ Timer, Stopwatch & Pomodoro — all-in-one time manager for DankMaterialShell.
 - **Desktop notifications** — `notify-send` at timeout
 - **Auto DND** — optionally enables Do Not Disturb while the timer is running
 - **Cross-monitor sync** — timer state is shared across all bar instances via `PluginGlobalVar`
+- **Survives restarts** — the running timer, pause position, mode and pomodoro phase are persisted and restored after `dms restart` (and after a shell crash)
 - **IPC** — control via `dms ipc call timeManager <command>`
 - **Settings** — fully configurable via DMS Settings UI (default times, pomodoro durations, sounds, notifications)
+
+## Persistence
+
+Session state is written to DMS's Tier 2 plugin state store:
+
+```
+~/.local/state/DankMaterialShell/plugins/timeManager_state.json
+```
+
+```json
+{
+  "session": {
+    "version": 1,
+    "mode": "pomodoro",
+    "isRunning": true,
+    "remainingMs": 812000,
+    "totalMs": 1500000,
+    "pomodoroPhase": "work",
+    "pomodoroSession": 3,
+    "wallBase": 1730000000000,
+    "wallAccum": 0,
+    "finishedWhileAway": false,
+    "savedAt": 1730000688000
+  }
+}
+```
+
+How it works:
+
+- **Writes happen on transitions only** (start, pause, resume, reset, mode switch, scroll-adjust, pomodoro phase change) — never on the 200 ms tick. A 30 s backstop timer bounds what a hard crash can lose.
+- **`wallBase` is an absolute epoch timestamp**, so a timer that was running while DMS was down resumes with the correct amount of time left instead of forgetting the downtime.
+- **Expiry during downtime is handled explicitly** — no late alarm sound, an optional notification (`notifyMissedWhileAway`), the pomodoro cycle advances without auto-starting, and the popout shows "Finished while DMS was restarting".
+- **One restore per shell** — the first bar instance claims the restore through a `PluginGlobalVar`, so multi-monitor setups never overwrite live state.
+
+Settings (default durations, sounds, etc.) remain in `plugin_settings.json`; only volatile session data lives in the state file. Requires a DMS build exposing `PluginService.savePluginState`; on older builds persistence silently no-ops.
+
+Wipe the stored session with:
+
+```bash
+dms ipc call timeManager clearState
+```
 
 ## Installation
 
@@ -84,6 +126,12 @@ dms ipc call timeManager mode pomodoro
 
 # Start timer with custom minutes
 dms ipc call timeManager startTimer 15
+
+# Inspect the persisted session (includes finishedWhileAway)
+dms ipc call timeManager getStatus
+
+# Wipe persisted state and reset the widget
+dms ipc call timeManager clearState
 ```
 
 ## Settings
@@ -93,7 +141,7 @@ Configure via DMS Settings → Plugins → DmsTimeManager:
 - **Timer**: Default time (1–120 min)
 - **Pomodoro**: Work duration, short break, long break, sessions before long break, auto-start
 - **Sound**: Custom sound path (WAV/OGG/MP3), use system sound
-- **Notifications**: Desktop notification on timeout, auto DND
+- **Notifications**: Desktop notification on timeout, notify if a countdown expired while DMS was restarting, auto DND
 - **Display**: Show icon in bar, bar display mode (Time Text / Progress Bar)
 
 ## Compatibility

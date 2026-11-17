@@ -2,7 +2,7 @@
   "id": "timeManager",
   "name": "Time Manager",
   "description": "Timer, Stopwatch & Pomodoro \u2014 all-in-one time manager for DankBar",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Zhainy",
   "icon": "timer",
   "type": "widget",

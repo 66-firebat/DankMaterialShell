@@ -179,7 +179,7 @@
     }
   ],
   "currentThemeName": "custom",
-  "customThemeFile": "/home/fireshark/.config/dms/fireshark.json",
+  "customThemeFile": "~/.config/dms/fireshark.json",
   "radiusStrength": 6,
   "clockFormat": "24h",
   "showSeconds": true,

@@ -23,6 +23,7 @@ PluginComponent {
     property bool autoDND: pluginData.autoDND || false
     property bool showPillIcon: pluginData.showPillIcon !== false
     property string displayMode: pluginData.displayMode || "time"
+    property bool notifyMissedWhileAway: pluginData.notifyMissedWhileAway !== false
 
     // ── Cross-instance state ──
     PluginGlobalVar {
@@ -72,6 +73,27 @@ PluginComponent {
         varName: "dtmWallAccum"
         defaultValue: 0
     }
+
+    // Claimed by the first bar instance that restores the persisted session so
+    // that extra instances (multi-monitor) never overwrite live state.
+    PluginGlobalVar {
+        id: globalSessionRestored
+        varName: "dtmSessionRestored"
+        defaultValue: false
+    }
+
+    // ── Persistence (Tier 2: ~/.local/state/DankMaterialShell/plugins/timeManager_state.json) ──
+    readonly property string stateKey: "session"
+    readonly property var validModes: ["timer", "stopwatch", "pomodoro"]
+
+    // True while we are writing globals from disk; suppresses the change
+    // handlers below so a restore does not look like user activity.
+    property bool _restoring: false
+    property int _restoreAttempts: 0
+
+    // Set when the timer ran out while the shell was not running. Cleared on the
+    // next user action. Exposed over IPC so scripts/the UI can react to it.
+    property bool finishedWhileAway: false
 
     // ── Derived state ──
     readonly property string currentMode: globalMode.value || "timer"
@@ -160,15 +182,11 @@ PluginComponent {
         var next = modes[(idx + 1) % modes.length];
         resetStop();
         globalMode.set(next);
-        if (pluginService)
-            pluginService.savePluginData(pluginId, "lastMode", next);
     }
 
     function setMode(mode) {
         resetStop();
         globalMode.set(mode);
-        if (pluginService)
-            pluginService.savePluginData(pluginId, "lastMode", mode);
     }
 
     function startPause() {
@@ -220,6 +238,7 @@ PluginComponent {
     }
 
     function startTimer(minutes) {
+        finishedWhileAway = false;
         var ms = minutes * 60 * 1000;
         globalTotalMs.set(ms);
         globalWallAccum.set(0);
@@ -230,6 +249,7 @@ PluginComponent {
     }
 
     function resetStop() {
+        finishedWhileAway = false;
         globalIsRunning.set(false);
         globalRemainingMs.set(0);
         globalTotalMs.set(0);
@@ -293,16 +313,25 @@ PluginComponent {
     }
 
     // ── Auto DND ──
+    // DMS 2.x exposes SessionData.setDoNotDisturb(enabled, minutes, origin);
+    // the 1.x `SessionData.isDND` property no longer exists.
+    function setDND(enabled) {
+        if (typeof SessionData === "undefined")
+            return;
+        if (typeof SessionData.setDoNotDisturb === "function")
+            SessionData.setDoNotDisturb(enabled);
+    }
+
     onIsRunningChanged: {
         if (autoDND)
-            SessionData.isDND = isRunning;
+            setDND(isRunning);
     }
 
     Connections {
         target: globalRemainingMs
         function onValueChanged() {
             if (autoDND && globalRemainingMs.value === 0 && !isRunning)
-                SessionData.isDND = false;
+                root.setDND(false);
         }
     }
 
@@ -315,12 +344,256 @@ PluginComponent {
         onTriggered: syncRemainingFromWall()
     }
 
-    // ── Restore last mode on load ──
-    Component.onCompleted: {
-        var savedMode = pluginService ? pluginService.loadPluginData(pluginId, "lastMode") : null;
-        if (savedMode && ["timer", "stopwatch", "pomodoro"].indexOf(savedMode) >= 0)
-            globalMode.set(savedMode);
+    // ──────────────────────────────────────────────
+    //  Persistence
+    // ──────────────────────────────────────────────
+    function snapshot() {
+        return {
+            "version": 1,
+            "mode": currentMode,
+            "isRunning": globalIsRunning.value,
+            "remainingMs": globalRemainingMs.value,
+            "totalMs": globalTotalMs.value,
+            "pomodoroPhase": pomodoroPhase,
+            "pomodoroSession": pomodoroSession,
+            "wallBase": globalWallBase.value,
+            "wallAccum": globalWallAccum.value,
+            "finishedWhileAway": finishedWhileAway,
+            "savedAt": Date.now()
+        };
     }
+
+    function persistState() {
+        if (_restoring || !pluginService || !pluginId)
+            return;
+        if (!pluginService.savePluginState)
+            return;
+        pluginService.savePluginState(pluginId, stateKey, snapshot());
+    }
+
+    function loadState() {
+        if (!pluginService || !pluginService.loadPluginState || !pluginId)
+            return null;
+        try {
+            return pluginService.loadPluginState(pluginId, stateKey, null);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // Migrate the old Tier 1 "lastMode" key (settings.json) into Tier 2.
+    function legacyMode() {
+        if (!pluginService || !pluginService.loadPluginData)
+            return null;
+        try {
+            var m = pluginService.loadPluginData(pluginId, "lastMode", null);
+            return validModes.indexOf(m) >= 0 ? m : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function restoreState() {
+        if (globalSessionRestored.value)
+            return;
+        if (!pluginService || !pluginId)
+            return;
+
+        // Claim the restore so sibling instances leave the globals alone.
+        globalSessionRestored.set(true);
+        _restoring = true;
+
+        var st = loadState();
+        var mode = (st && validModes.indexOf(st.mode) >= 0) ? st.mode : (legacyMode() || "timer");
+
+        var totalMs = (st && st.totalMs) || 0;
+        var wasRunning = !!(st && st.isRunning);
+        var wallBase = (st && st.wallBase) || 0;
+        var wallAccum = (st && st.wallAccum) || 0;
+        var remainingMs = (st && st.remainingMs) || 0;
+
+        globalMode.set(mode);
+        globalPomodoroPhase.set((st && st.pomodoroPhase) || "work");
+        globalPomodoroSession.set((st && st.pomodoroSession) || 1);
+        globalTotalMs.set(totalMs);
+        finishedWhileAway = !!(st && st.finishedWhileAway);
+
+        if (totalMs <= 0) {
+            // Nothing was running: leave the widget idle.
+            globalWallBase.set(0);
+            globalWallAccum.set(0);
+            globalIsRunning.set(false);
+            globalRemainingMs.set(0);
+            _restoring = false;
+            return;
+        }
+
+        if (wasRunning && wallBase > 0) {
+            // wallBase is an absolute epoch timestamp, so elapsed wall-clock time
+            // keeps accruing correctly even while the shell was down.
+            var elapsed = wallAccum + Math.max(0, Date.now() - wallBase);
+
+            if (mode === "stopwatch") {
+                var swRemaining = Math.min(totalMs, elapsed);
+                globalWallAccum.set(elapsed);
+                globalWallBase.set(swRemaining >= totalMs ? 0 : wallBase);
+                globalRemainingMs.set(swRemaining);
+                globalIsRunning.set(swRemaining < totalMs);
+            } else {
+                var left = Math.max(0, totalMs - elapsed);
+                if (left > 0) {
+                    globalWallAccum.set(wallAccum);
+                    globalWallBase.set(wallBase);
+                    globalRemainingMs.set(left);
+                    globalIsRunning.set(true);
+                } else {
+                    // Expired while DMS was not running.
+                    globalWallBase.set(0);
+                    globalWallAccum.set(elapsed);
+                    globalIsRunning.set(false);
+                    globalRemainingMs.set(0);
+                    finishedWhileAway = true;
+                    handleMissedTimeout();
+                }
+            }
+        } else {
+            // Paused / idle: the frozen remaining value is authoritative.
+            globalWallAccum.set(wallAccum);
+            globalWallBase.set(0);
+            globalIsRunning.set(false);
+            globalRemainingMs.set(remainingMs);
+        }
+
+        _restoring = false;
+
+        // If a countdown expired during downtime the phase/flag changes above were
+        // suppressed; write them out once so the next restart stays consistent.
+        if (finishedWhileAway)
+            persistState();
+    }
+
+    // Fired when a countdown ran out during downtime. Deliberately silent: an
+    // alarm hours late is worse than no alarm.
+    function handleMissedTimeout() {
+        if (showNotifications && notifyMissedWhileAway)
+            Proc.runCommand("dtm-missed-notify", ["notify-send", "-i", "appointment-soon",
+                "Time Manager",
+                currentMode === "pomodoro"
+                    ? (pomodoroPhase === "work" ? "Focus session ended while DMS was restarting" : "Break ended while DMS was restarting")
+                    : "Timer finished while DMS was restarting"], null, 0);
+
+        if (currentMode === "pomodoro") {
+            // Advance the cycle without auto-starting anything across a restart.
+            if (pomodoroPhase === "work") {
+                var nextSession = pomodoroSession + 1;
+                globalPomodoroSession.set(nextSession);
+                globalPomodoroPhase.set(nextSession % pomodoroSessionsBeforeLongBreak === 0 ? "longBreak" : "shortBreak");
+            } else {
+                globalPomodoroPhase.set("work");
+            }
+        }
+    }
+
+    function clearState() {
+        if (!pluginService || !pluginId)
+            return;
+        if (pluginService.clearPluginState)
+            pluginService.clearPluginState(pluginId);
+        resetStop();
+        globalMode.set("timer");
+        globalPomodoroPhase.set("work");
+        globalPomodoroSession.set(1);
+    }
+
+    // Persist on semantic transitions only. Global vars are the single choke
+    // point for every state mutation, so hooking them catches all call sites.
+    Connections {
+        target: globalIsRunning
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    Connections {
+        target: globalMode
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    Connections {
+        target: globalTotalMs
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    Connections {
+        target: globalWallBase
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    Connections {
+        target: globalWallAccum
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    Connections {
+        target: globalPomodoroPhase
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    Connections {
+        target: globalPomodoroSession
+        function onValueChanged() {
+            root.persistState();
+        }
+    }
+
+    // While running, remainingMs is derived from wallBase/wallAccum and therefore
+    // not worth writing every 200 ms. When stopped it is authoritative.
+    Connections {
+        target: globalRemainingMs
+        function onValueChanged() {
+            if (!root.isRunning)
+                root.persistState();
+        }
+    }
+
+    // Backstop: bounds worst-case loss after a hard crash (kill -9, compositor
+    // crash). Transitions are already covered by the connections above.
+    Timer {
+        interval: 30000
+        repeat: true
+        running: root.isRunning && !root._restoring
+        onTriggered: root.persistState()
+    }
+
+    // Restore once per shell. Retries until PluginService is attached.
+    Timer {
+        interval: 500
+        repeat: true
+        running: !globalSessionRestored.value && root._restoreAttempts < 120
+        onTriggered: {
+            if (!pluginService) {
+                root._restoreAttempts++;
+                return;
+            }
+            root.restoreState();
+        }
+    }
+
+    Component.onCompleted: restoreState()
+
+    // Best effort flush; the state writer debounces 150 ms, so this only helps
+    // for graceful shutdowns that outlive the debounce.
+    Component.onDestruction: persistState()
 
     // ──────────────────────────────────────────────
     //  Pill actions
@@ -579,6 +852,14 @@ PluginComponent {
                 }
 
                 StyledText {
+                    text: "Finished while DMS was restarting"
+                    font.pixelSize: Theme.fontSizeSmall
+                    color: Theme.warning
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: root.finishedWhileAway
+                }
+
+                StyledText {
                     text: root.currentMode === "pomodoro"
                         ? ("Session " + root.pomodoroSession
                            + " \u2014 "
@@ -776,8 +1057,14 @@ PluginComponent {
                 totalMs: globalTotalMs.value,
                 formatted: root.formatTime(globalRemainingMs.value),
                 pomodoroPhase: root.pomodoroPhase,
-                pomodoroSession: root.pomodoroSession
+                pomodoroSession: root.pomodoroSession,
+                finishedWhileAway: root.finishedWhileAway
             });
+        }
+
+        function clearState() : string {
+            root.clearState();
+            return "state_cleared";
         }
 
         function toggle() : string {

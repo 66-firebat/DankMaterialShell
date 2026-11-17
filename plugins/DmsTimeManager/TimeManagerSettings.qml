@@ -123,6 +123,13 @@ PluginSettings {
         defaultValue: false
     }
 
+    ToggleSetting {
+        settingKey: "notifyMissedWhileAway"
+        label: "Notify If Finished While Restarting"
+        description: "Send a notification when a countdown expired while DMS was not running (the alarm sound is skipped in that case)"
+        defaultValue: true
+    }
+
     StyledText {
         width: parent.width
         text: "Display"

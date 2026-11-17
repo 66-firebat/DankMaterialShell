@@ -1,0 +1,10 @@
+# Runtime artifacts DMS creates inside its config directory.
+# The config dir is symlinked to this working tree, so these appear here.
+.changelog-*
+.firstlaunch
+monitors.json
+clsettings.json
+
+# Plugin installer bookkeeping
+plugins/.repos/
+plugins/*.meta
