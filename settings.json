@@ -496,7 +496,7 @@
   "modalDarkenBackground": false,
   "notificationCompactMode": true,
   "notificationShowTimeoutBar": true,
-  "notificationPopupPosition": 5,
+  "notificationPopupPosition": 3,
   "notificationAnimationDuration": 0,
   "osdPosition": 7,
   "osdPowerProfileEnabled": true,
