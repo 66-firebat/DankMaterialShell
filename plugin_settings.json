@@ -31,7 +31,7 @@
   },
   "timeManager": {
     "enabled": true,
-    "barFontSize": 19,
+    "barFontSize": 21,
     "displayMode": "progress",
     "showPillIcon": false
   },
@@ -52,5 +52,8 @@
   },
   "floaty": {
     "enabled": true
+  },
+  "fireclocker": {
+    "enabled": false
   }
 }

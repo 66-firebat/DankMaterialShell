@@ -1,0 +1,20 @@
+{
+  "id": "fireclocker",
+  "name": "FireClocker",
+  "description": "Semicircular desktop clock with timer, stopwatch and pomodoro modes, plus an optional bar pill",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "fireshark",
+  "icon": "timer",
+  "type": "composite",
+  "components": {
+    "desktop": "./fireclocker.qml",
+    "widget": "./FireClockerPill.qml"
+  },
+  "settings": "./FireClockerSettings.qml",
+  "permissions": [
+    "settings_read",
+    "settings_write",
+    "process"
+  ]
+}

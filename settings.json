@@ -558,11 +558,11 @@
           "workspaceUnfocusedMonitorBorderColor": "primary",
           "workspaceUnfocusedMonitorBorderCustomColor": "#6750A4",
           "workspaceUnfocusedMonitorBorderThickness": 2,
-          "workspaceIndicatorStyle": "cards",
+          "workspaceIndicatorStyle": "lines",
           "showSpecialWorkspaces": false,
           "workspacePaddingCount": 6,
           "workspaceIndicatorCompact": false,
-          "workspaceIndicatorRoundness": 45
+          "workspaceIndicatorRoundness": 100
         },
         {
           "id": "spacer",
@@ -593,15 +593,6 @@
       "centerWidgets": [],
       "rightWidgets": [
         {
-          "id": "timeManager",
-          "enabled": true
-        },
-        {
-          "id": "spacer",
-          "enabled": true,
-          "size": 20
-        },
-        {
           "id": "notificationButton",
           "enabled": true
         },
@@ -618,16 +609,7 @@
         {
           "id": "spacer",
           "enabled": true,
-          "size": 20
-        },
-        {
-          "id": "battery",
-          "enabled": true,
-          "showBatteryPercent": true,
-          "showBatteryPercentOnlyOnBattery": false,
-          "showBatteryTime": false,
-          "showBatteryTimeOnlyOnBattery": false,
-          "batteryPillPercentSign": false
+          "size": 10
         },
         {
           "id": "controlCenterButton",
@@ -649,9 +631,22 @@
           "overflowMode": "always"
         },
         {
+          "id": "battery",
+          "enabled": true,
+          "showBatteryPercent": true,
+          "showBatteryPercentOnlyOnBattery": false,
+          "showBatteryTime": false,
+          "showBatteryTimeOnlyOnBattery": false,
+          "batteryPillPercentSign": false
+        },
+        {
           "id": "spacer",
           "enabled": true,
-          "size": 20
+          "size": 10
+        },
+        {
+          "id": "timeManager",
+          "enabled": true
         }
       ],
       "spacing": 6,
