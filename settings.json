@@ -517,6 +517,20 @@
       "showOnLastDisplay": true,
       "leftWidgets": [
         {
+          "id": "battery",
+          "enabled": true,
+          "showBatteryPercent": true,
+          "showBatteryPercentOnlyOnBattery": false,
+          "showBatteryTime": false,
+          "showBatteryTimeOnlyOnBattery": false,
+          "batteryPillPercentSign": false
+        },
+        {
+          "id": "spacer",
+          "enabled": true,
+          "size": 20
+        },
+        {
           "id": "workspaceSwitcher",
           "enabled": true,
           "showWorkspaceIndex": true,
@@ -583,11 +597,6 @@
         {
           "id": "clipboard",
           "enabled": false
-        },
-        {
-          "id": "spacer",
-          "enabled": true,
-          "size": 20
         }
       ],
       "centerWidgets": [],
@@ -629,15 +638,6 @@
           "showIdleInhibitorIcon": false,
           "showDoNotDisturbIcon": false,
           "overflowMode": "always"
-        },
-        {
-          "id": "battery",
-          "enabled": true,
-          "showBatteryPercent": true,
-          "showBatteryPercentOnlyOnBattery": false,
-          "showBatteryTime": false,
-          "showBatteryTimeOnlyOnBattery": false,
-          "batteryPillPercentSign": false
         },
         {
           "id": "spacer",
