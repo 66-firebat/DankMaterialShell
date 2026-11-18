@@ -528,7 +528,7 @@
         {
           "id": "spacer",
           "enabled": true,
-          "size": 20
+          "size": 10
         },
         {
           "id": "workspaceSwitcher",
@@ -572,16 +572,16 @@
           "workspaceUnfocusedMonitorBorderColor": "primary",
           "workspaceUnfocusedMonitorBorderCustomColor": "#6750A4",
           "workspaceUnfocusedMonitorBorderThickness": 2,
-          "workspaceIndicatorStyle": "lines",
+          "workspaceIndicatorStyle": "dots",
           "showSpecialWorkspaces": false,
           "workspacePaddingCount": 6,
           "workspaceIndicatorCompact": false,
-          "workspaceIndicatorRoundness": 100
+          "workspaceIndicatorRoundness": 58
         },
         {
           "id": "spacer",
           "enabled": true,
-          "size": 20
+          "size": 10
         },
         {
           "id": "focusedWindow",
@@ -608,7 +608,7 @@
         {
           "id": "spacer",
           "enabled": true,
-          "size": 20
+          "size": 10
         },
         {
           "id": "clock",
