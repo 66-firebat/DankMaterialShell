@@ -558,11 +558,11 @@
           "workspaceUnfocusedMonitorBorderColor": "primary",
           "workspaceUnfocusedMonitorBorderCustomColor": "#6750A4",
           "workspaceUnfocusedMonitorBorderThickness": 2,
-          "workspaceIndicatorStyle": "lines",
+          "workspaceIndicatorStyle": "cards",
           "showSpecialWorkspaces": false,
           "workspacePaddingCount": 6,
           "workspaceIndicatorCompact": false,
-          "workspaceIndicatorRoundness": 100
+          "workspaceIndicatorRoundness": 45
         },
         {
           "id": "spacer",
